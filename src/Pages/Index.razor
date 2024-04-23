@@ -1,0 +1,28 @@
+﻿@page "/"
+@inject NavigationManager navigationManager
+
+<PageTitle>Login</PageTitle>
+
+<h1>Choose option</h1>
+
+
+<div style="text-align: center;">
+    <table style="margin-left:auto;margin-right:auto;border-collapse: collapse; width: 80%;">
+        <thead>
+            <tr>
+                <th style="padding: 20px;"><button @onclick="Navigate" style="height: 400px; width: 100%;"><img style="height: 200px; width:200px;" type="image/png" src="icons/AdminIcon.png"/> <div>Admin</div></button></th>
+                <th style="padding: 20px;"><button @onclick="Navigate"  style="height: 400px; width: 100%;"><img style="height: 200px; width:200px;" type="image/png" src="icons/ModeratorIcon.png"/><div>Moderator</div></button></th>
+                <th style="padding: 20px;"><button @onclick="Navigate"  style="height: 400px; width: 100%;"><img style="height: 200px; width:200px;" type="image/png" src="icons/NutritionistIcon.png"/><div>Nutritionist</div></button></th>
+                <th style="padding: 20px;"><button @onclick="Navigate"  style="height: 400px; width: 100%;"><img style="height: 200px; width:200px;" type="image/png" src="icons/TrainerIcon.png"/><div>Trainer</div></button></th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@code{
+
+    private void Navigate() {
+        navigationManager.NavigateTo("/Identity/Login");  
+    }
+
+}
