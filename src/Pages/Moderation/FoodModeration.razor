@@ -2,7 +2,7 @@
 @using System.Text.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
-@attribute [Authorize(Roles = "moderator")]
+@attribute [Authorize(Roles = "Moderator")]
 
 <PageTitle>Food</PageTitle>
 
@@ -11,7 +11,7 @@
     <p><em>Loading...</em></p>
 }
 
-<AuthorizeView Context="FoodModerator" Roles="moderator">
+<AuthorizeView Context="FoodModerator" Roles="Moderator">
     <div class="container">
 
         <div class="row">

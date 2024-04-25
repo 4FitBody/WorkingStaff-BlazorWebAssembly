@@ -2,7 +2,7 @@
 @using System.Text.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
-@attribute [Authorize(Roles = "admin, nutritionist, trainer,moderator")]
+@attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
 
 <PageTitle>Supplements</PageTitle>
 
@@ -14,7 +14,7 @@
 }
 
 
-<AuthorizeView Context="SportSupplementsModerator" Roles="moderator">
+<AuthorizeView Context="SportSupplementsModerator" Roles="Moderator">
     <div class="container">
         <div class="row">
             @foreach (var pair in supplement)

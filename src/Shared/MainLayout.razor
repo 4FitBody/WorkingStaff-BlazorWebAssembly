@@ -10,11 +10,13 @@
 
     <main>
          <div class="top-row px-4">
-            <AuthorizeView Context="LogOut">
-                <Authorized>
-                    <button @onclick="Logout">Logout</button>
-                </Authorized>
-            </AuthorizeView>
+            <CascadingAuthenticationState>
+                <AuthorizeView Context="main">
+                    <Authorized>
+                        <button @onclick="Logout">Logout</button>
+                    </Authorized>
+                </AuthorizeView>
+            </CascadingAuthenticationState>
         </div>
 
         <article class="content px-4">
@@ -25,7 +27,7 @@
 
 @code {
     public async Task Logout() {
-        await localStorageService.RemoveItemAsync("jwt");
+        await localStorageService.RemoveItemAsync("jwt_access");
             
         await authenticationStateProvider.GetAuthenticationStateAsync();
     }

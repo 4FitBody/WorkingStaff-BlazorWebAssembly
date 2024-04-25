@@ -35,15 +35,20 @@
 
     public LoginDto loginDto { get; set; } = new();
 
-    private async Task OnLoginFormSubmitAsync(EditContext editContext) {
+    private async Task OnLoginFormSubmitAsync(EditContext editContext) 
+    {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PostAsJsonAsync("", loginDto);
+        var loginResponse = await httpClient.PostAsJsonAsync("http://localhost:5149/api/Identity/Login", loginDto);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK) {
-            var jwt = await loginResponse.Content.ReadAsStringAsync();
+            var json = await loginResponse.Content.ReadAsStringAsync();
 
-            await localStorageService.SetItemAsStringAsync("jwt", jwt);
+            var jwt = Newtonsoft.Json.JsonConvert.DeserializeObject<JwtToken>(json);
+
+            await localStorageService.SetItemAsStringAsync("jwt_access", jwt.AccessToken);
+            
+            await localStorageService.SetItemAsStringAsync("jwt_refresh", jwt.RefreshToken);
             
             await authenticationStateProvider.GetAuthenticationStateAsync();
 

@@ -2,7 +2,7 @@
 @using System.Text.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
-@attribute [Authorize(Roles = "admin, nutritionist, trainer,moderator")]
+@attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
 
 <PageTitle>Exercise</PageTitle>
 
@@ -15,7 +15,7 @@
 
 else
 {
-    <AuthorizeView Context="Exercise" Roles="admin,trainer,nutritionist">
+    <AuthorizeView Context="Exercise" Roles="Admin,Trainer,Nutritionist">
         <div class="container">
 
             <div class="row">
@@ -33,7 +33,7 @@ else
                                         <a href="/Exercise/GetById/{@pair.Id}">pair.Name</a>
                                     </div>
 
-                                    <AuthorizeView Roles="trainer">
+                                    <AuthorizeView Roles="Trainer">
                                         <button type="button" class="btn btn-danger"
                                             @onclick='()=>DeleteExerciseAsync(pair.Id)'>Delete</button>
                                         <button type="button" class="btn btn-primary"
@@ -47,7 +47,7 @@ else
                 }
             </div>
 
-            <AuthorizeView Roles="trainer">
+            <AuthorizeView Roles="Trainer">
                 <NavLink class="nav-link" href="Exercise/Create">
                     <span class="oi oi-plus" aria-hidden="true"></span> Add Exercise
                 </NavLink>

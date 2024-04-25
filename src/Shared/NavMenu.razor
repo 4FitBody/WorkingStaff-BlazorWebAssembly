@@ -15,51 +15,30 @@
             </NavLink>
         </div>
 
-        <AuthorizeView Context="auth" Roles="admin,trainer,nutritionist">
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/Food/">
-                    <span class="oi oi-plus" aria-hidden="true"></span> Food
-                </NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/Exercise/">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Exercises
-                </NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/News/">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> News
-                </NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/Supplements/">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Sport Supplements
-                </NavLink>
-            </div>
-        </AuthorizeView>
-
-        <AuthorizeView Context="authModerator" Roles="moderator">
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/Food/Moderation">
-                    <span class="oi oi-plus" aria-hidden="true"></span> Food
-                </NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/Exercise/Moderation">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Exercises
-                </NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/News/Moderation">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> News
-                </NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/Supplements/Moderation">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Sport Supplements
-                </NavLink>
-            </div>
-        </AuthorizeView>
+        <CascadingAuthenticationState>
+            <AuthorizeView Context="nav">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Food/">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Food
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Exercise/">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Exercises
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/News/">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> News
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Supplements/">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Sport Supplements
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+        </CascadingAuthenticationState>
     </nav>
 </div>
 

@@ -2,7 +2,7 @@
 @using System.Text.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
-@attribute [Authorize(Roles = "admin, nutritionist, trainer,moderator")]
+@attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
 
 <PageTitle>News</PageTitle>
 
@@ -29,7 +29,7 @@ else
                                 <a href="/News/GetById/@pair.Id">@pair.Title</a>
                             </div>
 
-                            <AuthorizeView Roles="moderator">
+                            <AuthorizeView Roles="Moderator">
                                 <button type="button" class="btn btn-danger" @onclick='()=>DeleteNewsAsync(pair.Id)'>Delete</button>
                                 <button type="button" class="btn btn-primary"
                                     @onclick='() => navigationManager.NavigateTo($"/News/Update/{pair.Id}")'> Change </button>
@@ -40,7 +40,7 @@ else
             }
         </div>
 
-        <AuthorizeView Roles="moderator">
+        <AuthorizeView Roles="Moderator">
             <NavLink class="nav-link" href="News/Create">
                 <span class="oi oi-plus" aria-hidden="true"></span> Add news
             </NavLink>
