@@ -15,7 +15,7 @@
 
 else
 {
-    <AuthorizeView Roles="trainer,nutritionist,admin">
+    <AuthorizeView Context="SportSupplements" Roles="trainer,nutritionist,admin">
         <div class="container">
 
             <div class="row">
@@ -30,7 +30,7 @@ else
                                     <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
 
                                     <div class="card-body">
-                                       @pair.Name
+                                        @pair.Name
                                     </div>
 
                                     <AuthorizeView Roles="trainer,nutritionist">
@@ -52,35 +52,6 @@ else
                     <span class="oi oi-plus" aria-hidden="true"></span> Add supplement
                 </NavLink>
             </AuthorizeView>
-        </div>
-    </AuthorizeView>
-
-    <AuthorizeView Roles="moderator">
-        <div class="container">
-            <div class="row">
-                @foreach (var pair in supplement)
-                {
-                    if (pair.IsApproved)
-                    {
-                        <div class="col-md-4">
-                            <div class="card mb-4 shadow-sm">
-                                <form id="@pair.Id">
-
-                                    <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
-
-                                    <div class="card-body">
-                                        @pair.Title
-                                    </div>
-
-                                    <button type="button" class="btn btn-danger" @onclick='()=>DeleteSupplementAsync(pair.Id)'>Delete</button>
-                                    <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Add
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    }
-                }
-            </div>
         </div>
     </AuthorizeView>
 }
@@ -120,7 +91,8 @@ else
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync($"api/Moderation/ApproveSportSupplement/{Id}");
+        var loginResponse = await
+        httpClient.PutAsJsonAsync<SportSupplement>($"api/Moderation/ApproveSportSupplement/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

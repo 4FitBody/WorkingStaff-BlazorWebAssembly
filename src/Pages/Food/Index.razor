@@ -15,7 +15,7 @@
 
 else
 {
-    <AuthorizeView Roles="trainer,nutritionist,admin">
+    <AuthorizeView Context="Food" Roles="trainer,nutritionist,admin">
         <div class="container">
 
             <div class="row">
@@ -30,11 +30,12 @@ else
                                     <img src="@pair.ImageUrl" class="card-img-top" alt="FoodCover">
 
                                     <div class="card-body">
-                                        <a href="/Food/GetById/@pair.Id">@pair.Title</a>
+                                        <a href="/Food/GetById/@pair.Id">@pair.Name</a>
                                     </div>
 
                                     <AuthorizeView Roles="nutritionist">
-                                        <button type="button" class="btn btn-danger" @onclick='()=>DeleteFoodAsync(pair.Id)'>Delete</button>
+                                        <button type="button" class="btn btn-danger"
+                                            @onclick='()=>DeleteFoodAsync(pair.Id)'>Delete</button>
                                         <button type="button" class="btn btn-primary"
                                             @onclick='() => navigationManager.NavigateTo($"/Food/Update/{pair.Id}")'> Change
                                         </button>
@@ -53,34 +54,6 @@ else
         </div>
     </AuthorizeView>
 
-    <AuthorizeView Roles="moderator">
-        <div class="container">
-
-            <div class="row">
-                @foreach (var pair in food)
-                {
-                    if (pair.IsApproved == false)
-                    {
-                        <div class="col-md-4">
-                            <div class="card mb-4 shadow-sm">
-                                <form id="@pair.Id">
-
-                                    <img src="@pair.ImageUrl" class="card-img-top" alt="FoodCover">
-
-                                    <div class="card-body">
-                                        <a href="/Food/GetById/{@pair.Id}">@pair.Name</a>
-                                    </div>
-
-                                    <button type="button" class="btn btn-danger" @onclick='()=>DeleteFoodAsync(pair.Id)'>Delete</button>
-                                    <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Approve </button>
-                                </form>
-                            </div>
-                        </div>
-                    }
-                }
-            </div>
-        </div>
-    </AuthorizeView>
 }
 
 
@@ -118,7 +91,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync($"api/Moderation/ApproveFood/{Id}");
+        var loginResponse = await httpClient.PutAsJsonAsync<Food>($"api/Moderation/ApproveFood/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

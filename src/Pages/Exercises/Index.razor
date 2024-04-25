@@ -15,7 +15,7 @@
 
 else
 {
-    <AuthorizeView Roles="admin,trainer,nutritionist">
+    <AuthorizeView Context="Exercise" Roles="admin,trainer,nutritionist">
         <div class="container">
 
             <div class="row">
@@ -34,7 +34,8 @@ else
                                     </div>
 
                                     <AuthorizeView Roles="trainer">
-                                        <button type="button" class="btn btn-danger" @onclick='()=>DeleteExerciseAsync(pair.Id)'>Delete</button>
+                                        <button type="button" class="btn btn-danger"
+                                            @onclick='()=>DeleteExerciseAsync(pair.Id)'>Delete</button>
                                         <button type="button" class="btn btn-primary"
                                             @onclick='() => navigationManager.NavigateTo($"/Exercise/Update/{pair.Id}")'> Change
                                         </button>
@@ -52,34 +53,6 @@ else
                 </NavLink>
             </AuthorizeView>
         </div>
-    </AuthorizeView>
-
-    <AuthorizeView Roles="moderator">
-        <div class="container">
-
-            <div class="row">
-                @foreach (var pair in exercise)
-                {
-                    if (pair.IsApproved)
-                    {
-                        <div class="col-md-4">
-                            <div class="card mb-4 shadow-sm">
-                                <form id="@pair.Id">
-
-                                    <img src="@pair.GifUrl" class="card-img-top" alt="ExerciseCover">
-
-                                    <div class="card-body">
-                                        <a href="/Exercise/GetById/@pair.Id">@pair.Title</a>
-                                    </div>
-                                    <button type="button" class="btn btn-danger" @onclick='()=>DeleteExerciseAsync(pair.Id)'>Delete</button>
-                                    <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Approve
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    }
-                }
-            </div>
     </AuthorizeView>
 }
 
@@ -118,7 +91,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync($"api/Moderation/ApproveExercise/{Id}");
+        var loginResponse = await httpClient.PutAsJsonAsync<Exercise>($"api/Moderation/ApproveExercise/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

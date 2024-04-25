@@ -1,0 +1,88 @@
+@page "/Supplements/Moderation"
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@inject HttpClient Http
+@attribute [Authorize(Roles = "admin, nutritionist, trainer,moderator")]
+
+<PageTitle>Supplements</PageTitle>
+
+<h1 style="text-align: center;">ALL Supplements</h1>
+
+@if (supplement == null)
+{
+    <p><em>Loading...</em></p>
+}
+
+
+<AuthorizeView Context="SportSupplementsModerator" Roles="moderator">
+    <div class="container">
+        <div class="row">
+            @foreach (var pair in supplement)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <form id="@pair.Id">
+
+                            <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
+
+                            <div class="card-body">
+                                @pair.Name
+                            </div>
+
+                            <button type="button" class="btn btn-danger"
+                                @onclick='()=>DeleteSupplementAsync(pair.Id)'>Delete</button>
+                            <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Add
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</AuthorizeView>
+
+
+@code {
+    private List<SportSupplement>? supplement;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync($"api/Moderation/GetAllSportSupplements/");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+
+        supplement = JsonSerializer.Deserialize<List<SportSupplement>>(content);
+    }
+
+    private async Task DeleteSupplementAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.DeleteAsync($"api/Supplements/Delete/{Id}");
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Supplements/");
+        }
+    }
+
+    private async Task UpdateStatusAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await
+        httpClient.PutAsJsonAsync<SportSupplement>($"api/Moderation/ApproveSportSupplement/{Id}", null);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Supplements/");
+        }
+    }
+}

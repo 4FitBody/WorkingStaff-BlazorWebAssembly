@@ -1,0 +1,84 @@
+@page "/Food/Moderation"
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@inject HttpClient Http
+@attribute [Authorize(Roles = "moderator")]
+
+<PageTitle>Food</PageTitle>
+
+@if (food == null)
+{
+    <p><em>Loading...</em></p>
+}
+
+<AuthorizeView Context="FoodModerator" Roles="moderator">
+    <div class="container">
+
+        <div class="row">
+            @foreach (var pair in food)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <form id="@pair.Id">
+
+                            <img src="@pair.ImageUrl" class="card-img-top" alt="FoodCover">
+
+                            <div class="card-body">
+                                <a href="/Food/GetById/{@pair.Id}">@pair.Name</a>
+                            </div>
+
+                            <button type="button" class="btn btn-danger"
+                                @onclick='()=>DeleteFoodAsync(pair.Id)'>Delete</button>
+                            <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Approve
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</AuthorizeView>
+
+
+@code {
+    private List<Food>? food;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync($"api/Moderation/GetAllFood");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+
+        food = JsonSerializer.Deserialize<List<Food>>(content);
+    }
+
+    private async Task DeleteFoodAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.DeleteAsync($"api/Food/Delete/{Id}");
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Food/");
+        }
+    }
+
+    private async Task UpdateStatusAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PutAsJsonAsync<Food>($"api/Moderation/ApproveFood/{Id}", null);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Food/");
+        }
+    }
+}
