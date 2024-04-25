@@ -1,0 +1,58 @@
+@page "/News/Create"
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "moderator")]
+
+<PageTitle>News</PageTitle>
+
+<h1 style="text-align: center;">Create</h1>
+
+
+<div class="container">
+    <EditForm Model="news" OnValidSubmit="OnCreateSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name: </label>
+                    <InputText name="text" @bind-Value=news.Title class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Description: </label>
+                    <InputText name="text" @bind-Value=news.Description class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Creation Date: </label>
+                    <InputDate name="date" @bind-Value=news.CreationDate class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image Url</label>
+                    <br>
+                    <InputFile class="form-control" required id="file" type="file" @bind-Value=news.ImageUrl name="file"
+                        accept="image/*" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    public News news = new News
+        {
+            IsApproved = false
+        };
+
+    private async Task OnCreateSubmitAsync(EditContext editContext)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PostAsJsonAsync("", news);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/News/");
+        }
+    }
+}

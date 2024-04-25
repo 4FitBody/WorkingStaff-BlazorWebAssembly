@@ -1,0 +1,41 @@
+@page "/News/Update/{Id:int}"
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "moderator")]
+
+<PageTitle>News</PageTitle>
+
+<h1 style="text-align: center;">Update</h1>
+
+
+
+<EditForm Model="news" OnValidSubmit="OnUpdateSubmitAsync">
+        <div class="mb-3">
+            <label  class="form-label">Title: </label>
+            <InputText required name="text" @bind-Value=news.Title class="form-control"/>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description: </label>
+            <InputTextArea required name="text" @bind-Value=news.Description class="form-control"/>
+        </div>
+
+        <button type="submit" class="btn submit-button">Update news</button>
+</EditForm>
+
+
+@code {
+    public News news = new News();
+
+    private async Task OnUpdateSubmitAsync(EditContext editContext)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PutAsJsonAsync("", news);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/News/");
+        }
+    }
+}

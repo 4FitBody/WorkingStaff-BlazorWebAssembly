@@ -20,22 +20,25 @@ else
         <div class="row">
             @foreach (var pair in exercise)
             {
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-sm">
-                        <form id="@pair.Id">
+                if (pair.IsApproved)
+                {
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <form id="@pair.Id">
 
-                            <img src="@pair.GifUrl" class="card-img-top" alt="ExerciseCover">
+                                <img src="@pair.GifUrl" class="card-img-top" alt="ExerciseCover">
 
-                            <div class="card-body">
-                                <button type="button" class="button-link" onclick="">@pair.Name</button>
-                            </div>
+                                <div class="card-body">
+                                    <button type="button" class="button-link" onclick="">@pair.Name</button>
+                                </div>
 
-                            <button type="button" class="btn btn-danger" @onclick="DeleteExerciseAsync">Delete</button>
-                            <button type="button" class="btn btn-primary"
-                                @onclick='() => navigationManager.NavigateTo($"/Exercise/Update/{pair.Id}")'> Change </button>
-                        </form>
+                                <button type="button" class="btn btn-danger" @onclick="DeleteExerciseAsync">Delete</button>
+                                <button type="button" class="btn btn-primary"
+                                    @onclick='() => navigationManager.NavigateTo($"/Exercise/Update/{pair.Id}")'> Change </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                }
             }
         </div>
 

@@ -1,0 +1,62 @@
+@page "/Supplements/Create"
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "moderator")]
+
+<PageTitle>Supplements</PageTitle>
+
+<h1 style="text-align: center;">Create</h1>
+
+
+<div class="container">
+    <EditForm Model="suplement" OnValidSubmit="OnCreateSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name: </label>
+                    <InputText name="text" @bind-Value=suplement.Name class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Description: </label>
+                    <InputText name="text" @bind-Value=suplement.Description class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Manufacture Country: </label>
+                    <InputText name="text" @bind-Value=suplement.ManufactureCountry class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Quantity: </label>
+                    <InputNumber name="text" @bind-Value=suplement.Quantity class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image Url</label>
+                    <br>
+                    <InputFile class="form-control" required id="file" type="file" @bind-Value=suplement.ImageUrl
+                        name="file" accept="image/*" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    public SportSupplement suplement = new SportSupplement
+        {
+            IsApproved = false
+        };
+
+    private async Task OnCreateSubmitAsync(EditContext editContext)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PostAsJsonAsync("", suplement);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Supplements/");
+        }
+    }
+}

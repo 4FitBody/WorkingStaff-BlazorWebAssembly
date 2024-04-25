@@ -1,14 +1,14 @@
-@page "/Food/"
+@page "/Supplements/"
 @using System.Text.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
 @attribute [Authorize(Roles = "admin, nutritionist, trainer,moderator")]
 
-<PageTitle>Food</PageTitle>
+<PageTitle>Supplements</PageTitle>
 
-<h1 style="text-align: center;">ALL FOOD</h1>
+<h1 style="text-align: center;">ALL Supplements</h1>
 
-@if (food == null)
+@if (supplement == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -18,23 +18,24 @@ else
     <div class="container">
 
         <div class="row">
-            @foreach (var pair in food)
+            @foreach (var pair in supplement)
             {
-                if (pair.IsApproved == true)
+                if (pair.IsApproved)
                 {
                     <div class="col-md-4">
                         <div class="card mb-4 shadow-sm">
                             <form id="@pair.Id">
 
-                                <img src="@pair.ImageUrl" class="card-img-top" alt="FoodCover">
+                                <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
 
                                 <div class="card-body">
                                     <button type="button" class="button-link" onclick="">@pair.Name</button>
                                 </div>
 
-                                <button type="button" class="btn btn-danger" @onclick="DeleteFoodAsync">Delete</button>
+                                <button type="button" class="btn btn-danger" @onclick="DeletesupplementAsync">Delete</button>
                                 <button type="button" class="btn btn-primary"
-                                    @onclick='() => navigationManager.NavigateTo($"/Food/Update/{pair.Id}")'> Change </button>
+                                    @onclick='() => navigationManager.NavigateTo($"/Supplements/Update/{pair.Id}")'> Change
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -42,15 +43,15 @@ else
             }
         </div>
 
-        <NavLink class="nav-link" href="Food/Create">
-            <span class="oi oi-plus" aria-hidden="true"></span> Add Food
+        <NavLink class="nav-link" href="Supplement/Create">
+            <span class="oi oi-plus" aria-hidden="true"></span> Add supplement
         </NavLink>
     </div>
 }
 
 
 @code {
-    private List<Food>? food;
+    private List<SportSupplement>? supplement;
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,10 +65,10 @@ else
             throw new ApplicationException(content);
         }
 
-        food = JsonSerializer.Deserialize<List<Food>>(content);
+        supplement = JsonSerializer.Deserialize<List<SportSupplement>>(content);
     }
 
-    private async Task DeleteFoodAsync()
+    private async Task DeletesupplementAsync()
     {
         var httpClient = new HttpClient();
 
@@ -75,7 +76,7 @@ else
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            navigationManager.NavigateTo("/Food/");
+            navigationManager.NavigateTo("/Supplements/");
         }
     }
 }
