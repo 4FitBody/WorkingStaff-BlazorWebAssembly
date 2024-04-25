@@ -10,28 +10,31 @@
 
 
 <EditForm Model="supplement" OnValidSubmit="OnUpdateSubmitAsync">
-        <div class="mb-3">
-            <label  class="form-label">Title: </label>
-            <InputText required name="text" @bind-Value=supplement.Name class="form-control"/>
-        </div>
+    <div class="mb-3">
+        <label class="form-label">Title: </label>
+        <InputText required name="text" @bind-Value=supplement.Name class="form-control" />
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Description: </label>
-            <InputTextArea required name="text" @bind-Value=supplement.Description class="form-control"/>
-        </div>
+    <div class="mb-3">
+        <label class="form-label">Description: </label>
+        <InputTextArea required name="text" @bind-Value=supplement.Description class="form-control" />
+    </div>
 
-        <button type="submit" class="btn submit-button">Update supplement</button>
+    <button type="submit" class="btn submit-button">Update supplement</button>
 </EditForm>
 
 
 @code {
     public SportSupplement supplement = new SportSupplement();
 
+    [Parameter]
+    public int Id { get; set; }
+
     private async Task OnUpdateSubmitAsync(EditContext editContext)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync("", supplement);
+        var loginResponse = await httpClient.PutAsJsonAsync($"api/Supplements/Update/{Id}", supplement);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

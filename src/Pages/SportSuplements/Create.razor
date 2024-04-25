@@ -48,11 +48,13 @@
             IsApproved = false
         };
 
+    
+
     private async Task OnCreateSubmitAsync(EditContext editContext)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PostAsJsonAsync("", suplement);
+        var loginResponse = await httpClient.PostAsJsonAsync($"api/Supplements/Update/", suplement);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

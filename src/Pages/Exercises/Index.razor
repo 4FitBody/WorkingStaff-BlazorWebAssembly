@@ -15,37 +15,72 @@
 
 else
 {
-    <div class="container">
+    <AuthorizeView Roles="admin,trainer,nutritionist">
+        <div class="container">
 
-        <div class="row">
-            @foreach (var pair in exercise)
-            {
-                if (pair.IsApproved)
+            <div class="row">
+                @foreach (var pair in exercise)
                 {
-                    <div class="col-md-4">
-                        <div class="card mb-4 shadow-sm">
-                            <form id="@pair.Id">
+                    if (pair.IsApproved)
+                    {
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <form id="@pair.Id">
 
-                                <img src="@pair.GifUrl" class="card-img-top" alt="ExerciseCover">
+                                    <img src="@pair.GifUrl" class="card-img-top" alt="ExerciseCover">
 
-                                <div class="card-body">
-                                    <button type="button" class="button-link" onclick="">@pair.Name</button>
-                                </div>
+                                    <div class="card-body">
+                                        <a href="/Exercise/GetById/{@pair.Id}">pair.Name</a>
+                                    </div>
 
-                                <button type="button" class="btn btn-danger" @onclick="DeleteExerciseAsync">Delete</button>
-                                <button type="button" class="btn btn-primary"
-                                    @onclick='() => navigationManager.NavigateTo($"/Exercise/Update/{pair.Id}")'> Change </button>
-                            </form>
+                                    <AuthorizeView Roles="trainer">
+                                        <button type="button" class="btn btn-danger" @onclick='()=>DeleteExerciseAsync(pair.Id)'>Delete</button>
+                                        <button type="button" class="btn btn-primary"
+                                            @onclick='() => navigationManager.NavigateTo($"/Exercise/Update/{pair.Id}")'> Change
+                                        </button>
+                                    </AuthorizeView>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
-            }
-        </div>
+            </div>
 
-        <NavLink class="nav-link" href="Exercise/Create">
-            <span class="oi oi-plus" aria-hidden="true"></span> Add Exercise
-        </NavLink>
-    </div>
+            <AuthorizeView Roles="trainer">
+                <NavLink class="nav-link" href="Exercise/Create">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Add Exercise
+                </NavLink>
+            </AuthorizeView>
+        </div>
+    </AuthorizeView>
+
+    <AuthorizeView Roles="moderator">
+        <div class="container">
+
+            <div class="row">
+                @foreach (var pair in exercise)
+                {
+                    if (pair.IsApproved)
+                    {
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <form id="@pair.Id">
+
+                                    <img src="@pair.GifUrl" class="card-img-top" alt="ExerciseCover">
+
+                                    <div class="card-body">
+                                        <a href="/Exercise/GetById/@pair.Id">@pair.Title</a>
+                                    </div>
+                                    <button type="button" class="btn btn-danger" @onclick='()=>DeleteExerciseAsync(pair.Id)'>Delete</button>
+                                    <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Approve
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+    </AuthorizeView>
 }
 
 
@@ -56,7 +91,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync("");
+        var response = await httpClient.GetAsync($"api/Exercise/GetAll");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -67,11 +102,23 @@ else
         exercise = JsonSerializer.Deserialize<List<Exercise>>(content);
     }
 
-    private async Task DeleteExerciseAsync()
+    private async Task DeleteExerciseAsync(int Id)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync("");
+        var loginResponse = await httpClient.DeleteAsync($"api/Exercise/Delete/{Id}");
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Exercise/");
+        }
+    }
+
+    private async Task UpdateStatusAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PutAsJsonAsync($"api/Moderation/ApproveExercise/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

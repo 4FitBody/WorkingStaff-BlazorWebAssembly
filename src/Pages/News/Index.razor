@@ -16,35 +16,35 @@
 else
 {
     <div class="container">
-
         <div class="row">
             @foreach (var pair in news)
             {
-                if (pair.IsApproved)
-                {
-                    <div class="col-md-4">
-                        <div class="card mb-4 shadow-sm">
-                            <form id="@pair.Id">
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <form id="@pair.Id">
 
-                                <img src="@pair.ImageUrl" class="card-img-top" alt="newsCover">
+                            <img src="@pair.ImageUrl" class="card-img-top" alt="newsCover">
 
-                                <div class="card-body">
-                                    <button type="button" class="button-link" onclick="">@pair.Title</button>
-                                </div>
+                            <div class="card-body">
+                                <a href="/News/GetById/@pair.Id">@pair.Title</a>
+                            </div>
 
-                                <button type="button" class="btn btn-danger" @onclick="DeletenewsAsync">Delete</button>
+                            <AuthorizeView Roles="moderator">
+                                <button type="button" class="btn btn-danger" @onclick='()=>DeleteNewsAsync(pair.Id)'>Delete</button>
                                 <button type="button" class="btn btn-primary"
                                     @onclick='() => navigationManager.NavigateTo($"/News/Update/{pair.Id}")'> Change </button>
-                            </form>
-                        </div>
+                            </AuthorizeView>
+                        </form>
                     </div>
-                }
+                </div>
             }
         </div>
 
-        <NavLink class="nav-link" href="News/Create">
-            <span class="oi oi-plus" aria-hidden="true"></span> Add news
-        </NavLink>
+        <AuthorizeView Roles="moderator">
+            <NavLink class="nav-link" href="News/Create">
+                <span class="oi oi-plus" aria-hidden="true"></span> Add news
+            </NavLink>
+        </AuthorizeView>
     </div>
 }
 
@@ -56,7 +56,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync("");
+        var response = await httpClient.GetAsync($"api/News/GetAll/");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -67,11 +67,11 @@ else
         news = JsonSerializer.Deserialize<List<News>>(content);
     }
 
-    private async Task DeletenewsAsync()
+    private async Task DeleteNewsAsync(int Id)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync("");
+        var loginResponse = await httpClient.DeleteAsync($"api/News/Delete/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

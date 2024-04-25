@@ -83,7 +83,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync("");
+        var response = await httpClient.GetAsync($"api/Exercise/Details/{Id}");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)

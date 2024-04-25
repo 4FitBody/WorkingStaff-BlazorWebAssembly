@@ -58,11 +58,12 @@ else
 
     [Parameter]
     public int Id { get; set; }
+    
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync("");
+        var response = await httpClient.GetAsync($"api/Food/Details/{Id}");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)

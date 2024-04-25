@@ -15,38 +15,74 @@
 
 else
 {
-    <div class="container">
+    <AuthorizeView Roles="trainer,nutritionist,admin">
+        <div class="container">
 
-        <div class="row">
-            @foreach (var pair in supplement)
-            {
-                if (pair.IsApproved)
+            <div class="row">
+                @foreach (var pair in supplement)
                 {
-                    <div class="col-md-4">
-                        <div class="card mb-4 shadow-sm">
-                            <form id="@pair.Id">
+                    if (pair.IsApproved)
+                    {
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <form id="@pair.Id">
 
-                                <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
+                                    <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
 
-                                <div class="card-body">
-                                    <button type="button" class="button-link" onclick="">@pair.Name</button>
-                                </div>
+                                    <div class="card-body">
+                                       @pair.Name
+                                    </div>
 
-                                <button type="button" class="btn btn-danger" @onclick="DeletesupplementAsync">Delete</button>
-                                <button type="button" class="btn btn-primary"
-                                    @onclick='() => navigationManager.NavigateTo($"/Supplements/Update/{pair.Id}")'> Change
-                                </button>
-                            </form>
+                                    <AuthorizeView Roles="trainer,nutritionist">
+                                        <button type="button" class="btn btn-danger"
+                                            @onclick='()=>DeleteSupplementAsync(pair.Id)'>Delete</button>
+                                        <button type="button" class="btn btn-primary"
+                                            @onclick='() => navigationManager.NavigateTo($"/Supplements/Update/{pair.Id}")'> Change
+                                        </button>
+                                    </AuthorizeView>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
-            }
-        </div>
+            </div>
 
-        <NavLink class="nav-link" href="Supplement/Create">
-            <span class="oi oi-plus" aria-hidden="true"></span> Add supplement
-        </NavLink>
-    </div>
+            <AuthorizeView Roles="trainer,nutritionist">
+                <NavLink class="nav-link" href="Supplement/Create">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Add supplement
+                </NavLink>
+            </AuthorizeView>
+        </div>
+    </AuthorizeView>
+
+    <AuthorizeView Roles="moderator">
+        <div class="container">
+            <div class="row">
+                @foreach (var pair in supplement)
+                {
+                    if (pair.IsApproved)
+                    {
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <form id="@pair.Id">
+
+                                    <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
+
+                                    <div class="card-body">
+                                        @pair.Title
+                                    </div>
+
+                                    <button type="button" class="btn btn-danger" @onclick='()=>DeleteSupplementAsync(pair.Id)'>Delete</button>
+                                    <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Add
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </AuthorizeView>
 }
 
 
@@ -57,7 +93,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync("");
+        var response = await httpClient.GetAsync($"api/Supplements/GetAll/");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -68,11 +104,23 @@ else
         supplement = JsonSerializer.Deserialize<List<SportSupplement>>(content);
     }
 
-    private async Task DeletesupplementAsync()
+    private async Task DeleteSupplementAsync(int Id)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync("");
+        var loginResponse = await httpClient.DeleteAsync($"api/Supplements/Delete/{Id}");
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Supplements/");
+        }
+    }
+
+    private async Task UpdateStatusAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PutAsJsonAsync($"api/Moderation/ApproveSportSupplement/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

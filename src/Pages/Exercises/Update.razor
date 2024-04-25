@@ -13,38 +13,41 @@
 
     <div class="mb-3">
         <label class="form-label">Name: </label>
-        <InputText required name="text" @bind-Value=exercise.Name class="form-control"/>
+        <InputText required name="text" @bind-Value=exercise.Name class="form-control" />
     </div>
 
     <div class="mb-3">
         <label class="form-label">Body part: </label>
-        <InputText required name="text" @bind-Value=exercise.BodyPart  class="form-control"/>
+        <InputText required name="text" @bind-Value=exercise.BodyPart class="form-control" />
     </div>
 
     <div class="mb-3">
         <label class="form-label">Equipment: </label>
-        <InputText required name="text" @bind-Value=exercise.Equipment class="form-control"/>
+        <InputText required name="text" @bind-Value=exercise.Equipment class="form-control" />
     </div>
 
     <div class="mb-3">
         <label class="form-label">Target: </label>
-        <InputText required name="text" @bind-Value=exercise.Target  class="form-control"/>
+        <InputText required name="text" @bind-Value=exercise.Target class="form-control" />
     </div>
 
     <br>
 
-    <button  type="submit" class="btn submit-button">Update exercise</button>
+    <button type="submit" class="btn submit-button">Update exercise</button>
 </EditForm>
 
 
 @code {
     public Exercise exercise = new Exercise();
 
+    [Parameter]
+    public int Id { get; set; }
+
     private async Task OnUpdateSubmitAsync(EditContext editContext)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync("", exercise);
+        var loginResponse = await httpClient.PutAsJsonAsync($"api/Exercise/Update/{Id}", exercise);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

@@ -56,7 +56,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PostAsJsonAsync("", exercise);
+        var loginResponse = await httpClient.PostAsJsonAsync($"api/Exercise/Create/", exercise);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
