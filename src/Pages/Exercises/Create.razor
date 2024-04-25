@@ -1,0 +1,66 @@
+@page "/Exercise/Create"
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "trainer")]
+
+<PageTitle>Exercise</PageTitle>
+
+<h1 style="text-align: center;">Create</h1>
+
+
+<div class="container">
+    <EditForm Model="exercise" OnValidSubmit="OnCreateSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name: </label>
+                    <InputText name="text" @bind-Value=exercise.Name class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Name: </label>
+                    <InputText name="text" @bind-Value=exercise.Name class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Equipment: </label>
+                    <InputText name="text" @bind-Value=exercise.Equipment class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Body Part: </label>
+                    <InputText name="text" @bind-Value=exercise.BodyPart class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Target: </label>
+                    <InputText name="text" @bind-Value=exercise.Target class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gif Url</label>
+                    <br>
+                    <InputFile class="form-control" required id="file" type="file" @bind-Value=exercise.GifUrl name="file"
+                        accept="image/gif" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    public Exercise exercise = new Exercise
+        {
+            IsApproved = false
+        };
+
+    private async Task OnCreateSubmitAsync(EditContext editContext)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PostAsJsonAsync("", exercise);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Exercise/");
+        }
+    }
+}

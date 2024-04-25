@@ -1,0 +1,76 @@
+@page "/Food/GetById/{Id:int}"
+@using System.Text.Json
+@attribute [Authorize(Roles = "admin, nutritionist, trainer,moderator")]
+
+<PageTitle>Food</PageTitle>
+
+<h1 style="text-align: center;">Get Food</h1>
+
+
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css">
+</head>
+
+@if (food == null)
+{
+    <p><em>Not Found</em></p>
+}
+else
+{
+
+    <body>
+        <section class="text-gray-700 body-font">
+            <div class="container mx-auto flex px-5 py-17 md:flex-row flex-col items-center">
+                <div
+                    class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
+
+                    <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">@food.Name
+                    </h1>
+
+                    <p class="mb-8 leading-relaxed" style="text-align: justify">@food.Description</p>
+
+                </div>
+
+                <div class="lg:max-w-lg  md:w-1/2 w-5/6">
+                    @if ($"https://www.youtube.com/embed/{food.ImageUrl}" == "https://www.youtube.com/embed/")
+                    {
+                        <div class="not-found"
+                            style="width: 420px; height: 315px; background-color: black; color: gray; display: flex; justify-content: center; align-items: center; border-radius: 8px;">
+                            Not Found
+                        </div>
+                    }
+                    else
+                    {
+                        <iframe class="object-cover object-center rounded" width="420" height="315"
+                            src="https://www.youtube.com/embed/@food.VideoUrl"></iframe>
+                    }
+                </div>
+
+            </div>
+
+        </section>
+    </body>
+}
+
+@code {
+    public Food food = new Food();
+
+    [Parameter]
+    public int Id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync("");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+#pragma warning disable CS8601
+        food = JsonSerializer.Deserialize<Food>(content);
+
+    }
+}

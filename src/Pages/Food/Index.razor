@@ -1,0 +1,82 @@
+@page "/Food/"
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@inject HttpClient Http
+@attribute [Authorize(Roles = "admin, nutritionist, trainer,moderator")]
+
+<PageTitle>Food</PageTitle>
+
+<h1 style="text-align: center;">ALL FOOD</h1>
+
+@if (food == null)
+{
+    <p><em>Loading...</em></p>
+}
+
+else
+{
+    <div class="container">
+
+        <div class="row">
+            @foreach (var pair in food)
+            {
+                if (pair.IsApproved == true)
+                {
+
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <form id="@pair.Id">
+
+                                <img src="@pair.ImageUrl" class="card-img-top" alt="FoodCover">
+
+                                <div class="card-body">
+                                    <button type="button" class="button-link" onclick="">@pair.Name</button>
+                                </div>
+
+                                <button type="button" class="btn btn-danger" @onclick="DeleteFoodAsync">Delete</button>
+                                <button type="button" class="btn btn-primary"
+                                    @onclick='() => navigationManager.NavigateTo($"/Food/Update/{pair.Id}")'> Change </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <NavLink class="nav-link" href="Food/Create">
+            <span class="oi oi-plus" aria-hidden="true"></span> Add Food
+        </NavLink>
+    </div>
+}
+
+
+@code {
+    private List<Food>? food;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync("");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+
+        food = JsonSerializer.Deserialize<List<Food>>(content);
+    }
+
+    private async Task DeleteFoodAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.DeleteAsync("");
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Food/");
+        }
+    }
+}

@@ -1,0 +1,68 @@
+@page "/Food/Update/{Id:int}"
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "nutritionist")]
+
+<PageTitle>Food</PageTitle>
+
+<h1 style="text-align: center;">Update</h1>
+
+
+
+<div class="container">
+    <EditForm Model="food" OnValidSubmit="OnUpdateSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name: </label>
+                    <InputText name="text" @bind-Value=food.Name class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Image: </label>
+                    <InputFile name="file" accept="image/*" @bind-Value=food.ImageUrl class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Description: </label>
+                    <InputText name="text" @bind-Value=food.Description class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Diet: </label>
+                    <InputSelect name="category" @bind-Value=food.Diet class="form-control">
+                        <option value="Omnivore">Omnivore</option>
+                        <option value="Vegetarian">Vegetarian</option>
+                        <option value="Vegan">Vegan</option>
+                        <option value="Paleo">Paleo</option>
+                        <option value="Gluten-Free">Gluten-Free</option>0
+                        <option value="Whole30">Whole30</option>
+                    </InputSelect>
+                </div>
+                <div class="form-group">
+                    <label>Video: </label>
+                    <InputFile name="file" accept="video/mp4,video/x-m4v,video/*" @bind-Value=food.VideoUrl
+                        class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Change</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+
+@code {
+    public Food food = new Food();
+
+    private async Task OnUpdateSubmitAsync(EditContext editContext)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PutAsJsonAsync("", food);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Food/");
+        }
+    }
+}

@@ -1,0 +1,97 @@
+@page "/Exercise/GetById/{Id:int}"
+@using System.Text.Json
+@attribute [Authorize(Roles = "admin, nutritionist, trainer,moderator")]
+
+<PageTitle>Exercise</PageTitle>
+
+<h1 style="text-align: center;">Get Exercise</h1>
+
+
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css">
+</head>
+
+@if (exercise == null)
+{
+    <p><em>Not Found</em></p>
+}
+else
+{
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm" style="width: 1250px">
+                    <div class="card-body description">
+                        <img class="image-instruction" src="@exercise.GifUrl" alt="@exercise.Name" />
+                        <div class="details">
+                            <style>
+                                * {
+                                    text-align: left !important;
+                                }
+                            </style>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <img src="~/icons/body-part.png" />
+                            <span><b>Body part: </b>@exercise.BodyPart</span>
+                            <br>
+                            <br>
+                            <img src="~/icons/equipment.png" />
+                            <span><b>Equipment: </b>@exercise.Equipment</span>
+                            <br>
+                            <br>
+                            <img src="~/icons/target.png" />
+                            <span><b>Target: </b>@exercise.Target</span>
+                            <br>
+                            <br>
+                            <span><b>Secondary muscles: </b></span>
+                            <ol>
+                                @foreach (var muscle in @exercise.SecondaryMuscles)
+                                {
+                                    <li>@muscle</li>
+                                }
+                            </ol>
+                        </div>
+                        <div>
+                            <br>
+                            <div><span><b>Instructions:</b></span></div>
+                            <br>
+                            <ol class="instructions-list">
+                                @foreach (var instruction in exercise.Instructions)
+                                {
+                                    <li>@instruction</li>
+                                }
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    public Exercise exercise = new Exercise();
+
+    [Parameter]
+    public int Id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync("");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+#pragma warning disable CS8601
+        exercise = JsonSerializer.Deserialize<Exercise>(content);
+
+    }
+}

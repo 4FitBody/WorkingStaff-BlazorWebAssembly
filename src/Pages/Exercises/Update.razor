@@ -1,0 +1,54 @@
+@page "/Exercise/Update/{Id:int}"
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "trainer")]
+
+<PageTitle>Exercise</PageTitle>
+
+<h1 style="text-align: center;">Update</h1>
+
+
+
+<EditForm Model="exercise" OnValidSubmit="OnUpdateSubmitAsync">
+
+    <div class="mb-3">
+        <label class="form-label">Name: </label>
+        <InputText required name="text" @bind-Value=exercise.Name class="form-control"/>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Body part: </label>
+        <InputText required name="text" @bind-Value=exercise.BodyPart  class="form-control"/>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Equipment: </label>
+        <InputText required name="text" @bind-Value=exercise.Equipment class="form-control"/>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Target: </label>
+        <InputText required name="text" @bind-Value=exercise.Target  class="form-control"/>
+    </div>
+
+    <br>
+
+    <button  type="submit" class="btn submit-button">Update exercise</button>
+</EditForm>
+
+
+@code {
+    public Exercise exercise = new Exercise();
+
+    private async Task OnUpdateSubmitAsync(EditContext editContext)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PutAsJsonAsync("", exercise);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Exercise/");
+        }
+    }
+}
