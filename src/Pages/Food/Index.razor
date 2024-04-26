@@ -15,6 +15,7 @@
 
 else
 {
+    <CascadingAuthenticationState>
     <AuthorizeView Context="Food" Roles="Trainer,Nutritionist,Admin">
         <div class="container">
 
@@ -53,6 +54,8 @@ else
             </AuthorizeView>
         </div>
     </AuthorizeView>
+    </CascadingAuthenticationState>
+    
 
 }
 
@@ -64,7 +67,8 @@ else
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"api/Food/GetAll");
+        var response = await httpClient.GetAsync($"http://localhost:5149/api/Food/Index");
+        
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -79,7 +83,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync($"api/Food/Delete/{Id}");
+        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5149/api/Food/Delete/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -91,7 +95,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync<Food>($"api/Moderation/ApproveFood/{Id}", null);
+        var loginResponse = await httpClient.PutAsJsonAsync<Food>($"http://localhost:5149/api/Moderation/ApproveFood/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

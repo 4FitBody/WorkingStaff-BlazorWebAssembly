@@ -20,7 +20,7 @@
                 </div>
                 <div class="form-group">
                     <label>Image: </label>
-                    <InputFile name="file" accept="image/*" @bind-Value=food.ImageUrl class="form-control" />
+                    <InputFile OnChange="@UploadImageChanged" name="file" accept="image/*" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label>Description: </label>
@@ -28,7 +28,7 @@
                 </div>
                 <div class="form-group">
                     <label>Diet: </label>
-                    <InputSelect name="category" @bind-Value=food.Diet class="form-control">
+                    <InputSelect @bind-Value=food.Diet name="category" class="form-control">
                         <option value="Omnivore">Omnivore</option>
                         <option value="Vegetarian">Vegetarian</option>
                         <option value="Vegan">Vegan</option>
@@ -39,7 +39,7 @@
                 </div>
                 <div class="form-group">
                     <label>Video: </label>
-                    <InputFile name="file" accept="video/mp4,video/x-m4v,video/*" @bind-Value=food.VideoUrl
+                    <InputFile OnChange="@UploadVideoChanged" name="file" accept="video/mp4,video/x-m4v,video/*"
                         class="form-control" />
                 </div>
                 <button type="submit" class="btn btn-primary">Create</button>
@@ -49,20 +49,77 @@
 </div>
 
 @code {
-    public Food food = new Food
-    {
-        IsApproved = false
-    };
+    public Food food = new Food();
 
-    private async Task OnCreateSubmitAsync(EditContext editContext)
+    public FoodContent foodContent = new FoodContent();
+
+    public class FoodContent
+    {
+        public Food Food { get; set; }
+        public string? ImageFileName { get; set; }
+        public byte[]? ImageFileContent { get; set; } 
+        public string? VideoFileName { get; set; } 
+        public byte[]? VideoFileContent { get; set; } 
+    }
+
+    private async Task OnCreateSubmitAsync()
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"api/Food/Create/", food);
+        foodContent.Food = food;
+
+        var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
+
+        var foodContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(foodContent, settings);
+
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5149/api/Food/Create/", foodContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
             navigationManager.NavigateTo("/Food/");
         }
     }
+
+    private async Task UploadImageChanged(InputFileChangeEventArgs e)
+   {
+        Stream stream = e.File.OpenReadStream();
+
+        MemoryStream ms = new MemoryStream();
+
+        await stream.CopyToAsync(ms);
+
+        stream.Close();
+
+        FileToUpload uploadedFile = new FileToUpload();
+
+        foodContent.ImageFileName = e.File.Name;
+
+        foodContent.ImageFileContent = ms.ToArray();
+
+        ms.Close();
+   }
+
+   private async Task UploadVideoChanged(InputFileChangeEventArgs e)
+   {
+        Stream stream = e.File.OpenReadStream();
+
+        MemoryStream ms = new MemoryStream();
+
+        await stream.CopyToAsync(ms);
+
+        stream.Close();
+
+        FileToUpload uploadedFile = new FileToUpload();
+
+        foodContent.VideoFileName = e.File.Name;
+
+        foodContent.VideoFileContent = ms.ToArray();
+        
+        ms.Close();
+   }
 }

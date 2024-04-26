@@ -56,7 +56,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"api/News/GetAll/");
+        var response = await httpClient.GetAsync($"http://localhost:5149/api/News/Index/");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -71,7 +71,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync($"api/News/Delete/{Id}");
+        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5149/api/News/Delete/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

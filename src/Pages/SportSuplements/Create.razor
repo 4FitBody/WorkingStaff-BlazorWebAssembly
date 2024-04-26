@@ -33,7 +33,7 @@
                 <div class="form-group">
                     <label class="form-label">Image Url</label>
                     <br>
-                    <InputFile class="form-control" required id="file" type="file" @bind-Value=suplement.ImageUrl
+                    <InputFile OnChange="@UploadImageChanged" class="form-control" required id="file" type="file" @bind-Value=suplement.ImageUrl
                         name="file" accept="image/*" />
                 </div>
                 <button type="submit" class="btn btn-primary">Create</button>
@@ -48,17 +48,54 @@
             IsApproved = false
         };
 
-    
+    public SportSupplementContent sportSupplementContent = new SportSupplementContent();
+
+    public class SportSupplementContent
+    {
+        public SportSupplement SportSupplement { get; set; }
+        public string? ImageFileName { get; set; }
+        public byte[]? ImageFileContent { get; set; } 
+    }
 
     private async Task OnCreateSubmitAsync(EditContext editContext)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"api/Supplements/Update/", suplement);
+        sportSupplementContent.SportSupplement = suplement;
+
+        var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
+
+        var supplementsContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(sportSupplementContent, settings);
+
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5149/api/Supplements/Create/", supplementsContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
             navigationManager.NavigateTo("/Supplements/");
         }
+    }
+
+    private async Task UploadImageChanged(InputFileChangeEventArgs e)
+    {
+        Stream stream = e.File.OpenReadStream();
+
+        MemoryStream ms = new MemoryStream();
+
+        await stream.CopyToAsync(ms);
+
+        stream.Close();
+
+        FileToUpload uploadedFile = new FileToUpload();
+
+        sportSupplementContent.ImageFileName = e.File.Name;
+
+        sportSupplementContent.ImageFileContent = ms.ToArray();
+
+        ms.Close();
     }
 }

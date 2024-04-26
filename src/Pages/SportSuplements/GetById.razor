@@ -54,7 +54,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"api/Supplements/Details/{Id}");
+        var response = await httpClient.GetAsync($"http://localhost:5149/api/Supplements/Details/{Id}");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)

@@ -61,7 +61,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync($"api/Food/Update/{Id}", food);
+        var loginResponse = await httpClient.PutAsJsonAsync($"http://localhost:5149/api/Food/Update/{Id}", food);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

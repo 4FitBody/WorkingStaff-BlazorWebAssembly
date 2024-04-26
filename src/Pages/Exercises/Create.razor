@@ -37,7 +37,7 @@
                 <div class="form-group">
                     <label class="form-label">Gif Url</label>
                     <br>
-                    <InputFile class="form-control" required id="file" type="file" @bind-Value=exercise.GifUrl name="file"
+                    <InputFile OnChange="@UploadImageChanged" class="form-control" required id="file" type="file" name="file"
                         accept="image/gif" />
                 </div>
                 <button type="submit" class="btn btn-primary">Create</button>
@@ -52,15 +52,54 @@
             IsApproved = false
         };
 
+    public ExerciseContent exerciseContent = new ExerciseContent();
+
+    public class ExerciseContent
+    {
+        public Exercise Exercise { get; set; }
+        public string? ImageFileName { get; set; }
+        public byte[]? ImageFileContent { get; set; } 
+    }
+
     private async Task OnCreateSubmitAsync(EditContext editContext)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"api/Exercise/Create/", exercise);
+        exerciseContent.Exercise = exercise;
+
+        var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
+
+        var exerciseContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(exerciseContent, settings);
+
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5149/api/Exercise/Create/", exerciseContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
             navigationManager.NavigateTo("/Exercise/");
         }
     }
+
+    private async Task UploadImageChanged(InputFileChangeEventArgs e)
+   {
+        Stream stream = e.File.OpenReadStream();
+
+        MemoryStream ms = new MemoryStream();
+
+        await stream.CopyToAsync(ms);
+
+        stream.Close();
+
+        FileToUpload uploadedFile = new FileToUpload();
+
+        exerciseContent.ImageFileName = e.File.Name;
+
+        exerciseContent.ImageFileContent = ms.ToArray();
+
+        ms.Close();
+   }
 }

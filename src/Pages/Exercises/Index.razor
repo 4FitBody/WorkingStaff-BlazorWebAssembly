@@ -64,7 +64,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"api/Exercise/GetAll");
+        var response = await httpClient.GetAsync($"http://localhost:5149/api/Exercise/Index");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -79,7 +79,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync($"api/Exercise/Delete/{Id}");
+        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5149/api/Exercise/Delete/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -91,7 +91,7 @@ else
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync<Exercise>($"api/Moderation/ApproveExercise/{Id}", null);
+        var loginResponse = await httpClient.PutAsJsonAsync<Exercise>($"http://localhost:5149/api/Moderation/ApproveExercise/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
