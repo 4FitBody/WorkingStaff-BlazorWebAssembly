@@ -87,7 +87,7 @@
 
     private async Task UploadImageChanged(InputFileChangeEventArgs e)
    {
-        Stream stream = e.File.OpenReadStream();
+        @* Stream stream = e.File.OpenReadStream();
 
         MemoryStream ms = new MemoryStream();
 
@@ -101,12 +101,12 @@
 
         foodContent.ImageFileContent = ms.ToArray();
 
-        ms.Close();
+        ms.Close(); *@
    }
 
    private async Task UploadVideoChanged(InputFileChangeEventArgs e)
    {
-        Stream stream = e.File.OpenReadStream();
+        @* Stream stream = e.File.OpenReadStream();
 
         MemoryStream ms = new MemoryStream();
 
@@ -120,6 +120,6 @@
 
         foodContent.VideoFileContent = ms.ToArray();
         
-        ms.Close();
+        ms.Close(); *@
    }
 }

@@ -1,6 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">4FitBody-WorkingStaff</a>
+        <a class="navbar-brand" href="">4FitBody WorkingStaff</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -16,7 +16,7 @@
         </div>
 
         <CascadingAuthenticationState>
-            <AuthorizeView Context="nav">
+            <AuthorizeView Context="nav" Roles="Admin,Trainer,Nutritionist">
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="/Food/">
                         <span class="oi oi-plus" aria-hidden="true"></span> Food
@@ -34,6 +34,29 @@
                 </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="/Supplements/">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Sport Supplements
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+
+             <AuthorizeView Context="moderation" Roles="Moderator">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Food/Moderation">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Food
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Exercise/Moderation">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Exercises
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/News/Moderation">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> News
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Supplements/Moderation">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Sport Supplements
                     </NavLink>
                 </div>

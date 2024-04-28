@@ -1,28 +1,174 @@
 ﻿@page "/"
 @inject NavigationManager navigationManager
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject ILocalStorageService localStorageService
+
 
 <PageTitle>Login</PageTitle>
 
-<h1>Choose option</h1>
+<style>
+    .content {
+        text-align: center;
+        color: lightblue;
+    }
+</style>
 
 
-<div style="text-align: center;">
+<div class="content">
+
+    <h1 style="color:black">Choose Account Type</h1>
+
     <table style="margin-left:auto;margin-right:auto;border-collapse: collapse; width: 80%;">
         <thead>
             <tr>
-                <th style="padding: 20px;"><button @onclick="Navigate" style="height: 400px; width: 100%;"><img style="height: 200px; width:200px;" type="image/png" src="icons/AdminIcon.png"/> <div>Admin</div></button></th>
-                <th style="padding: 20px;"><button @onclick="Navigate"  style="height: 400px; width: 100%;"><img style="height: 200px; width:200px;" type="image/png" src="icons/ModeratorIcon.png"/><div>Moderator</div></button></th>
-                <th style="padding: 20px;"><button @onclick="Navigate"  style="height: 400px; width: 100%;"><img style="height: 200px; width:200px;" type="image/png" src="icons/NutritionistIcon.png"/><div>Nutritionist</div></button></th>
-                <th style="padding: 20px;"><button @onclick="Navigate"  style="height: 400px; width: 100%;"><img style="height: 200px; width:200px;" type="image/png" src="icons/TrainerIcon.png"/><div>Trainer</div></button></th>
+                <th style="padding: 20px;"><button @onclick='()=>AddToRoles("Admin")' class="button-index"><img
+                            style="height: 200px; width:200px;" type="image/png" src="icons/AdminIcon.png" />
+                        <div>Admin</div>
+                        <img src="icons/Tick.png" class="caret" style="height: 50px; width:50px;">
+                    </button></th>
+                <th style="padding: 20px;"><button @onclick='()=>AddToRoles("Moderator")' class="button-index"><img
+                            style="height: 200px; width:200px;" type="image/png" src="icons/ModeratorIcon.png" />
+                        <div>Moderator</div>
+                        <img src="icons/Tick.png" class="caret" style="height: 50px; width:50px; ">
+                    </button></th>
+                <th style="padding: 20px;"><button @onclick='()=>AddToRoles("Nutritionist")' class="button-index"><img
+                            style="height: 200px; width:200px;" type="image/png" src="icons/NutritionistIcon.png" />
+                        <div>Nutritionist </div>
+                        <img src="icons/Tick.png" class="caret" style="height: 50px; width:50px; ">
+                    </button></th>
+                <th style="padding: 20px;"><button @onclick='()=>AddToRoles("Trainer")' class="button-index"><img
+                            style="height: 200px; width:200px;" type="image/png" src="icons/TrainerIcon.png" />
+                        <div>Trainer</div>
+                        <img src="icons/Tick.png" class="caret" style="height: 50px; width:50px; ">
+                    </button></th>
             </tr>
         </thead>
     </table>
+
+    <div style="color: black;">
+
+        <h1>Login</h1>
+
+        <EditForm Model="loginDto" OnValidSubmit="OnLoginFormSubmitAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <label class="form-label d-block">
+                Email:
+                <InputText name="email" class="center-block icon-email" @bind-Value=loginDto.Email></InputText>
+            </label>
+
+            <label class="form-label d-block">
+                Password:
+                <InputText name="password" class="center-block icon-pass" type="password" @bind-Value=loginDto.Password>
+                </InputText>
+            </label>
+
+            <button class="btn" style="background-color: lightblue; height:5vh;width:25vh">Login</button>
+        </EditForm>
+    </div>
 </div>
 
-@code{
-
-    private void Navigate() {
-        navigationManager.NavigateTo("/Identity/Login");  
+<style>
+    .button-index {
+        height: 250;
+        position: relative;
+        width: 100%;
+        background-color: white;
+        border: 5px solid lightblue;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: large;
     }
 
+    .caret {
+        position: absolute;
+        bottom: 1px;
+        right: 0px;
+        display: none;
+        using System.Runtime.InteropServices;
+        using System.Runtime.InteropServices;
+    }
+
+    .button-index:focus {
+        outline: none;
+        border: 5px solid blue;
+        border-radius: 10px;
+    }
+
+    .button-index:focus .caret {
+        display: block;
+    }
+
+    .center-block {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+        width: 75vh;
+        height: 5vh;
+    }
+
+    .icon-email {
+        padding-left: 25px;
+        background: url("https://freepngimg.com/thumb/telephone/68708-ipma-message-icon-email-telephone-png-image-high-quality.png") no-repeat left;
+        background-size: 20px;
+    }
+
+    .icon-pass {
+        padding-left: 25px;
+        background: url("https://cdn2.iconfinder.com/data/icons/flat-ui-icons-24-px/24/lock-24-1024.png") no-repeat left;
+        background-size: 20px;
+    }
+</style>
+
+@code {
+
+    public class LoginDto
+    {
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+
+        [Required]
+        public List<string> Roles = new List<string>();
+    }
+
+    private async Task AddToRoles(string role)
+    {
+        if (loginDto.Roles.Count() == 0)
+        {
+            loginDto.Roles.Add(role);
+        }
+        else
+        {
+            loginDto.Roles.Clear();
+            loginDto.Roles.Add(role);
+        }
+    }
+
+    public LoginDto loginDto { get; set; } = new();
+
+    private async Task OnLoginFormSubmitAsync(EditContext editContext)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PostAsJsonAsync("http://localhost:5149/api/Identity/Login", loginDto);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var json = await loginResponse.Content.ReadAsStringAsync();
+
+            var jwt = Newtonsoft.Json.JsonConvert.DeserializeObject<JwtToken>(json);
+
+            await localStorageService.SetItemAsStringAsync("jwt_access", jwt.AccessToken);
+
+            await localStorageService.SetItemAsStringAsync("jwt_refresh", jwt.RefreshToken);
+
+            await authenticationStateProvider.GetAuthenticationStateAsync();
+
+            navigationManager.NavigateTo($"/Home/{loginDto.Roles.FirstOrDefault()}");
+        }
+    }
 }

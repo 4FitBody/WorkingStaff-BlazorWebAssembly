@@ -82,7 +82,7 @@
 
     private async Task UploadImageChanged(InputFileChangeEventArgs e)
     {
-        Stream stream = e.File.OpenReadStream();
+        @* Stream stream = e.File.OpenReadStream();
 
         MemoryStream ms = new MemoryStream();
 
@@ -96,6 +96,6 @@
 
         sportSupplementContent.ImageFileContent = ms.ToArray();
 
-        ms.Close();
+        ms.Close(); *@
     }
 }
