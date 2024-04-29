@@ -1,0 +1,155 @@
+﻿@inject IAuthorizationService AuthorizationService
+@inject NavigationManager navigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">4FitBody WorkingStaff</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+
+        <CascadingAuthenticationState>
+            <AuthorizeView Context="main">
+                <NotAuthorized>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            <span class="oi oi-home" aria-hidden="true"></span> Home
+                        </NavLink>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+            <AuthorizeView Context="nav" Roles="Admin,Trainer,Nutritionist">
+                @GetRole();
+                @if (Role == "Admin")
+                {
+                    <NavLink class="nav-link" href="/Home/Admin">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                }
+                else if (Role == "Moderator")
+                {
+                    <NavLink class="nav-link" href="/Home/Moderator">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                }
+                else if (Role == "Nutritionist")
+                {
+                    <NavLink class="nav-link" href="/Home/Nutritionist">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                }
+                else if (Role == "Trainer")
+                {
+                    <NavLink class="nav-link" href="/Home/Trainer">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                }
+                else
+                {
+                    <NavLink class="nav-link" href="/error">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                }
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Food/">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Food
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Exercise/">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Exercises
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/News/">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> News
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Supplements/">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Sport Supplements
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+
+            <AuthorizeView Context="moderation" Roles="Moderator">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Food/Moderation">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Food
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Exercise/Moderation">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Exercises
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/News/Moderation">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> News
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Supplements/Moderation">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Sport Supplements
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+        </CascadingAuthenticationState>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    public string Role { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task<string> GetRole()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user.IsInRole("Admin"))
+            {
+                Role = "Admin";
+            }
+            else if (user.IsInRole("Moderator"))
+            {
+                Role = "Moderator";
+            }
+            else if (user.IsInRole("Nutritionist"))
+            {
+                Role = "Nutritionist";
+            }
+            else if (user.IsInRole("Trainer"))
+            {
+                Role = "Trainer";
+            }
+            else
+            {
+                navigationManager.NavigateTo("/error");
+            }
+            return Role;
+        }
+        navigationManager.NavigateTo("/error");
+        return "";
+    }
+}
+}

@@ -1,0 +1,34 @@
+﻿@inherits LayoutComponentBase
+
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject ILocalStorageService localStorageService
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+         <div class="top-row px-4">
+            <CascadingAuthenticationState>
+                <AuthorizeView Context="main">
+                    <Authorized>
+                        <button class="btn" style="color: lightblue;" @onclick="Logout">Logout</button>
+                    </Authorized>
+                </AuthorizeView>
+            </CascadingAuthenticationState>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    public async Task Logout() {
+        await localStorageService.RemoveItemAsync("jwt_access");
+            
+        await authenticationStateProvider.GetAuthenticationStateAsync();
+    }
+}

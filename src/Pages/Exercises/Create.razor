@@ -1,0 +1,105 @@
+@page "/Exercise/Create"
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "Trainer")]
+
+<PageTitle>Exercise</PageTitle>
+
+<h1 style="text-align: center;">Create</h1>
+
+
+<div class="container">
+    <EditForm Model="exercise" OnValidSubmit="OnCreateSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name: </label>
+                    <InputText name="text" @bind-Value=exercise.Name class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Name: </label>
+                    <InputText name="text" @bind-Value=exercise.Name class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Equipment: </label>
+                    <InputText name="text" @bind-Value=exercise.Equipment class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Body Part: </label>
+                    <InputText name="text" @bind-Value=exercise.BodyPart class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Target: </label>
+                    <InputText name="text" @bind-Value=exercise.Target class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gif Url</label>
+                    <br>
+                    <InputFile OnChange="@UploadImageChanged" class="form-control" required id="file" type="file" name="file"
+                        accept="image/gif" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    public Exercise exercise = new Exercise
+        {
+            IsApproved = false
+        };
+
+    public ExerciseContent exerciseContent = new ExerciseContent();
+
+    public class ExerciseContent
+    {
+        public Exercise Exercise { get; set; }
+        public string? ImageFileName { get; set; }
+        public byte[]? ImageFileContent { get; set; } 
+    }
+
+    private async Task OnCreateSubmitAsync(EditContext editContext)
+    {
+        var httpClient = new HttpClient();
+
+        exerciseContent.Exercise = exercise;
+
+        var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
+
+        var exerciseContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(exerciseContent, settings);
+
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5149/api/Exercise/Create/", exerciseContentJson);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Exercise/");
+        }
+    }
+
+    private async Task UploadImageChanged(InputFileChangeEventArgs e)
+   {
+        @* Stream stream = e.File.OpenReadStream();
+
+        MemoryStream ms = new MemoryStream();
+
+        await stream.CopyToAsync(ms);
+
+        stream.Close();
+
+        FileToUpload uploadedFile = new FileToUpload();
+
+        exerciseContent.ImageFileName = e.File.Name;
+
+        exerciseContent.ImageFileContent = ms.ToArray();
+
+        ms.Close(); *@
+   }
+}

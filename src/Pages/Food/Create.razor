@@ -1,0 +1,125 @@
+@page "/Food/Create"
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "Nutritionist")]
+
+<PageTitle>Food</PageTitle>
+
+<h1 style="text-align: center;">Create</h1>
+
+
+<div class="container">
+    <EditForm Model="food" OnValidSubmit="OnCreateSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name: </label>
+                    <InputText name="text" @bind-Value=food.Name class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Image: </label>
+                    <InputFile OnChange="@UploadImageChanged" name="file" accept="image/*" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Description: </label>
+                    <InputText name="text" @bind-Value=food.Description class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Diet: </label>
+                    <InputSelect @bind-Value=food.Diet name="category" class="form-control">
+                        <option value="Omnivore">Omnivore</option>
+                        <option value="Vegetarian">Vegetarian</option>
+                        <option value="Vegan">Vegan</option>
+                        <option value="Paleo">Paleo</option>
+                        <option value="Gluten-Free">Gluten-Free</option>0
+                        <option value="Whole30">Whole30</option>
+                    </InputSelect>
+                </div>
+                <div class="form-group">
+                    <label>Video: </label>
+                    <InputFile OnChange="@UploadVideoChanged" name="file" accept="video/mp4,video/x-m4v,video/*"
+                        class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    public Food food = new Food();
+
+    public FoodContent foodContent = new FoodContent();
+
+    public class FoodContent
+    {
+        public Food Food { get; set; }
+        public string? ImageFileName { get; set; }
+        public byte[]? ImageFileContent { get; set; } 
+        public string? VideoFileName { get; set; } 
+        public byte[]? VideoFileContent { get; set; } 
+    }
+
+    private async Task OnCreateSubmitAsync()
+    {
+        var httpClient = new HttpClient();
+
+        foodContent.Food = food;
+
+        var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
+
+        var foodContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(foodContent, settings);
+
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5149/api/Food/Create/", foodContentJson);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Food/");
+        }
+    }
+
+    private async Task UploadImageChanged(InputFileChangeEventArgs e)
+   {
+        @* Stream stream = e.File.OpenReadStream();
+
+        MemoryStream ms = new MemoryStream();
+
+        await stream.CopyToAsync(ms);
+
+        stream.Close();
+
+        FileToUpload uploadedFile = new FileToUpload();
+
+        foodContent.ImageFileName = e.File.Name;
+
+        foodContent.ImageFileContent = ms.ToArray();
+
+        ms.Close(); *@
+   }
+
+   private async Task UploadVideoChanged(InputFileChangeEventArgs e)
+   {
+        @* Stream stream = e.File.OpenReadStream();
+
+        MemoryStream ms = new MemoryStream();
+
+        await stream.CopyToAsync(ms);
+
+        stream.Close();
+
+        FileToUpload uploadedFile = new FileToUpload();
+
+        foodContent.VideoFileName = e.File.Name;
+
+        foodContent.VideoFileContent = ms.ToArray();
+        
+        ms.Close(); *@
+   }
+}

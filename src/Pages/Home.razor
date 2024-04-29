@@ -1,0 +1,58 @@
+@page "/Home/{Role}"
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
+
+<AuthorizeView Context="home">
+    <div class="container">
+        <h1>Welcome to 4FitBody Wotking Staff</h1>
+        <p>@AddText()</p>
+    </div>
+</AuthorizeView>
+
+<style>
+    h1 {
+        color: #333;
+        font-size: 48px;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 50px 20px;
+        text-align: center;
+    }
+</style>
+
+@code {
+    public string Text { get; set; }
+
+    [Parameter]
+    public string Role { get; set; }
+
+    private string AddText()
+    {
+        if (Role == "Admin")
+        {
+            Text = "You are admin!";
+        }
+        else if (Role == "Moderator")
+        {
+            Text = "You are Moderator. You can check nutrition and exercises.";
+        }
+        else if (Role == "Trainer")
+        {
+            Text = "You are trainer. You can add new exercises,update old ones and delete them.";
+        }
+        else if (Role == "Nutritionist")
+        {
+            Text = "You are nutritionist. You can add new nutrition,update old ones and delete them.";
+        }
+        else{
+            navigationManager.NavigateTo($"/error");
+        }
+        return Text;
+    }
+
+}

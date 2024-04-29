@@ -1,0 +1,101 @@
+@page "/Supplements/Create"
+@inject NavigationManager navigationManager
+@attribute [Authorize(Roles = "Moderator")]
+
+<PageTitle>Supplements</PageTitle>
+
+<h1 style="text-align: center;">Create</h1>
+
+
+<div class="container">
+    <EditForm Model="suplement" OnValidSubmit="OnCreateSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name: </label>
+                    <InputText name="text" @bind-Value=suplement.Name class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Description: </label>
+                    <InputText name="text" @bind-Value=suplement.Description class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Manufacture Country: </label>
+                    <InputText name="text" @bind-Value=suplement.ManufactureCountry class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Quantity: </label>
+                    <InputNumber name="text" @bind-Value=suplement.Quantity class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image Url</label>
+                    <br>
+                    <InputFile OnChange="@UploadImageChanged" class="form-control" required id="file" type="file" @bind-Value=suplement.ImageUrl
+                        name="file" accept="image/*" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    public SportSupplement suplement = new SportSupplement
+        {
+            IsApproved = false
+        };
+
+    public SportSupplementContent sportSupplementContent = new SportSupplementContent();
+
+    public class SportSupplementContent
+    {
+        public SportSupplement SportSupplement { get; set; }
+        public string? ImageFileName { get; set; }
+        public byte[]? ImageFileContent { get; set; } 
+    }
+
+    private async Task OnCreateSubmitAsync(EditContext editContext)
+    {
+        var httpClient = new HttpClient();
+
+        sportSupplementContent.SportSupplement = suplement;
+
+        var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
+
+        var supplementsContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(sportSupplementContent, settings);
+
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5149/api/Supplements/Create/", supplementsContentJson);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Supplements/");
+        }
+    }
+
+    private async Task UploadImageChanged(InputFileChangeEventArgs e)
+    {
+        @* Stream stream = e.File.OpenReadStream();
+
+        MemoryStream ms = new MemoryStream();
+
+        await stream.CopyToAsync(ms);
+
+        stream.Close();
+
+        FileToUpload uploadedFile = new FileToUpload();
+
+        sportSupplementContent.ImageFileName = e.File.Name;
+
+        sportSupplementContent.ImageFileContent = ms.ToArray();
+
+        ms.Close(); *@
+    }
+}

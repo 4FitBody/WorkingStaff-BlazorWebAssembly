@@ -1,0 +1,81 @@
+@page "/News/"
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@inject HttpClient Http
+@attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
+
+<PageTitle>News</PageTitle>
+
+<h1 style="text-align: center;">ALL News</h1>
+
+@if (news == null)
+{
+    <p><em>Loading...</em></p>
+}
+
+else
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var pair in news)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <form id="@pair.Id">
+
+                            <img src="@pair.ImageUrl" class="card-img-top" alt="newsCover">
+
+                            <div class="card-body">
+                                <a href="/News/GetById/@pair.Id">@pair.Title</a>
+                            </div>
+
+                            <AuthorizeView Roles="Moderator">
+                                <button type="button" class="btn btn-danger" @onclick='()=>DeleteNewsAsync(pair.Id)'>Delete</button>
+                                <button type="button" class="btn btn-primary"
+                                    @onclick='() => navigationManager.NavigateTo($"/News/Update/{pair.Id}")'> Change </button>
+                            </AuthorizeView>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <AuthorizeView Roles="Moderator">
+            <NavLink class="nav-link" href="News/Create">
+                <span class="oi oi-plus" aria-hidden="true"></span> Add news
+            </NavLink>
+        </AuthorizeView>
+    </div>
+}
+
+
+@code {
+    private List<News>? news;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync($"http://localhost:5149/api/News/Index/");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+
+        news = JsonSerializer.Deserialize<List<News>>(content);
+    }
+
+    private async Task DeleteNewsAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5149/api/News/Delete/{Id}");
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/News/");
+        }
+    }
+}

@@ -1,0 +1,102 @@
+@page "/Supplements/"
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@inject HttpClient Http
+@attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
+
+<PageTitle>Supplements</PageTitle>
+
+<h1 style="text-align: center;">ALL Supplements</h1>
+
+@if (supplement == null)
+{
+    <p><em>Loading...</em></p>
+}
+
+else
+{
+    <AuthorizeView Context="SportSupplements" Roles="Trainer,Nutritionist,Admin">
+        <div class="container">
+
+            <div class="row">
+                @foreach (var pair in supplement)
+                {
+                    if (pair.IsApproved)
+                    {
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <form id="@pair.Id">
+
+                                    <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
+
+                                    <div class="card-body">
+                                        @pair.Name
+                                    </div>
+
+                                    <AuthorizeView Roles="Trainer,Nutritionist">
+                                        <button type="button" class="btn btn-danger"
+                                            @onclick='()=>DeleteSupplementAsync(pair.Id)'>Delete</button>
+                                        <button type="button" class="btn btn-primary"
+                                            @onclick='() => navigationManager.NavigateTo($"/Supplements/Update/{pair.Id}")'> Change
+                                        </button>
+                                    </AuthorizeView>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <AuthorizeView Roles="Trainer,Nutritionist">
+                <NavLink class="nav-link" href="Supplement/Create">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Add supplement
+                </NavLink>
+            </AuthorizeView>
+        </div>
+    </AuthorizeView>
+}
+
+
+@code {
+    private List<SportSupplement>? supplement;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync($"http://localhost:5149/api/SportSuplement/Index/");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+
+        supplement = JsonSerializer.Deserialize<List<SportSupplement>>(content);
+    }
+
+    private async Task DeleteSupplementAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5149/api/Supplements/Delete/{Id}");
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Supplements/");
+        }
+    }
+
+    private async Task UpdateStatusAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await
+        httpClient.PutAsJsonAsync<SportSupplement>($"http://localhost:5149/api/Moderation/ApproveSportSupplement/{Id}", null);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Supplements/");
+        }
+    }
+}

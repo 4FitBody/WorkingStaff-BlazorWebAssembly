@@ -1,0 +1,105 @@
+@page "/Food/"
+@using System.Text.Json
+@inject NavigationManager navigationManager
+@inject HttpClient Http
+@attribute [Authorize(Roles = "Admin, Nutritionist, Trainer, Moderator")]
+
+<PageTitle>Food</PageTitle>
+
+<h1 style="text-align: center;">ALL FOOD</h1>
+
+@if (food == null)
+{
+    <p><em>Loading...</em></p>
+}
+
+else
+{
+    <CascadingAuthenticationState>
+    <AuthorizeView Context="Food" Roles="Trainer,Nutritionist,Admin">
+        <div class="container">
+
+            <div class="row">
+                @foreach (var pair in food)
+                {
+                    if (pair.IsApproved == true)
+                    {
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <form id="@pair.Id">
+
+                                    <img src="@pair.ImageUrl" class="card-img-top" alt="FoodCover">
+
+                                    <div class="card-body">
+                                        <a href="/Food/GetById/@pair.Id">@pair.Name</a>
+                                    </div>
+
+                                    <AuthorizeView Roles="Nutritionist">
+                                        <button type="button" class="btn btn-danger"
+                                            @onclick='()=>DeleteFoodAsync(pair.Id)'>Delete</button>
+                                        <button type="button" class="btn btn-primary"
+                                            @onclick='() => navigationManager.NavigateTo($"/Food/Update/{pair.Id}")'> Change
+                                        </button>
+                                    </AuthorizeView>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <AuthorizeView Roles="Nutritionist">
+                <NavLink class="nav-link" href="Food/Create">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Add Food
+                </NavLink>
+            </AuthorizeView>
+        </div>
+    </AuthorizeView>
+    </CascadingAuthenticationState>
+    
+
+}
+
+
+@code {
+    private List<Food>? food;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync($"http://localhost:5149/api/Food/Index");
+        
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+
+        food = JsonSerializer.Deserialize<List<Food>>(content);
+    }
+
+    private async Task DeleteFoodAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5149/api/Food/Delete/{Id}");
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Food/");
+        }
+    }
+
+    private async Task UpdateStatusAsync(int Id)
+    {
+        var httpClient = new HttpClient();
+
+        var loginResponse = await httpClient.PutAsJsonAsync<Food>($"http://localhost:5149/api/Moderation/ApproveFood/{Id}", null);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Food/");
+        }
+    }
+}
