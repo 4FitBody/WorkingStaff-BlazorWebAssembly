@@ -1,16 +1,13 @@
-@page "/Home/{Role}/"
+@page "/Home/{Role}"
 @inject NavigationManager navigationManager
 @attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
-
 
 <AuthorizeView Context="home">
     <div class="container">
         <h1>Welcome to 4FitBody Wotking Staff</h1>
-
         <p>@AddText()</p>
     </div>
 </AuthorizeView>
-
 
 <style>
     h1 {
@@ -33,9 +30,10 @@
 
     [Parameter]
     public string Role { get; set; }
+
     private string AddText()
     {
-        @if (Role == "Admin")
+        if (Role == "Admin")
         {
             Text = "You are admin!";
         }
@@ -50,6 +48,9 @@
         else if (Role == "Nutritionist")
         {
             Text = "You are nutritionist. You can add new nutrition,update old ones and delete them.";
+        }
+        else{
+            navigationManager.NavigateTo($"/error");
         }
         return Text;
     }
