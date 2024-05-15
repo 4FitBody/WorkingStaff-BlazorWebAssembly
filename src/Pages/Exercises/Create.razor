@@ -76,7 +76,7 @@
 
         var exerciseContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(exerciseContent, settings);
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5149/api/Exercise/Create/", exerciseContentJson);
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5160/api/Exercise/Create/", exerciseContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -86,7 +86,7 @@
 
     private async Task UploadImageChanged(InputFileChangeEventArgs e)
    {
-        @* Stream stream = e.File.OpenReadStream();
+        Stream stream = e.File.OpenReadStream();
 
         MemoryStream ms = new MemoryStream();
 
@@ -94,12 +94,10 @@
 
         stream.Close();
 
-        FileToUpload uploadedFile = new FileToUpload();
-
         exerciseContent.ImageFileName = e.File.Name;
 
         exerciseContent.ImageFileContent = ms.ToArray();
 
-        ms.Close(); *@
+        ms.Close(); 
    }
 }
