@@ -1,0 +1,201 @@
+@page "/Registration"
+@inject NavigationManager navigationManager
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject ILocalStorageService localStorageService
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Registration</PageTitle>
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Context="register" Roles="Admin">
+
+        <div class="@(IsShown ? "content" : "content-none")">
+            <div style="color: black;">
+                <h1>Registration</h1>
+
+                <img src="/img-01.png" alt="IMG">
+                <br>
+                <EditForm Model="registerDto" OnValidSubmit="OnLoginFormSubmitAsync">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <label class="form-label d-block">
+                        <InputText name="email" placeholder="Email" class="center-block icon-email"
+                            @bind-Value=registerDto.Email></InputText>
+                    </label>
+                    <br>
+                    <label class="form-label d-block">
+                        <InputNumber min="0" max="90" placeholder="Age" type="number" name="age"
+                            class="center-block icon-age" @bind-Value=registerDto.Age></InputNumber>
+                    </label>
+                    <br>
+                    <label class="form-label d-block">
+                        <InputText name="password" placeholder="Password" class="center-block icon-pass" type="password"
+                            @bind-Value=registerDto.Password>
+                        </InputText>
+                    </label>
+                    <br>
+                    <button class="btn" style="background-color: lightblue; height:5vh;width:25vh"
+                        @onclick="ChangeDisplay">Login</button>
+                </EditForm>
+            </div>
+
+        </div>
+
+
+        <div class="@(IsShownOTP ? "OTP" : "content-OTP")">
+            <p style="color: black;">Please enter six digit number</p>
+            <EditForm OnValidSubmit="OnOTPFormSubmitAsync" Model="oTPCode">
+                <InputText class="input" type="text" maxlength="1"
+                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num1" />
+                <InputText class="input" type="text" maxlength="1"
+                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num2" />
+                <InputText class="input" type="text" maxlength="1"
+                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num3" />
+                <InputText class="input" type="text" maxlength="1"
+                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num4" />
+                <InputText class="input" type="text" maxlength="1"
+                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num5" />
+                <InputText class="input" type="text" maxlength="1"
+                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num6" />
+                <br>
+                <br>
+                <button>Submit</button>
+            </EditForm>
+        </div>
+
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+@code {
+
+    private bool IsShown { get; set; } = true;
+    private bool IsShownOTP { get; set; } = false;
+
+    private void ChangeDisplay()
+    {
+        IsShown = !IsShown;
+        IsShownOTP = !IsShownOTP;
+    }
+
+    public class OTPCode
+    {
+        [Required]
+        public string Num1 { get; set; }
+        [Required]
+        public string Num2 { get; set; }
+        [Required]
+        public string Num3 { get; set; }
+        [Required]
+        public string Num4 { get; set; }
+        [Required]
+        public string Num5 { get; set; }
+        [Required]
+        public string Num6 { get; set; }
+    }
+
+    OTPCode oTPCode = new OTPCode();
+
+    private async Task OnOTPFormSubmitAsync(EditContext editContext)
+    {
+
+    }
+
+    public class RegisterDto
+    {
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
+        public int Age { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+
+        [Required]
+        public List<string> Roles = new List<string>();
+    }
+
+    public RegisterDto registerDto { get; set; } = new();
+
+    private async Task OnLoginFormSubmitAsync(EditContext editContext)
+    {
+
+    }
+}
+
+<style>
+    .content {
+        text-align: center;
+        color: lightblue;
+        display: flex;
+        width: 50%;
+        margin: auto;
+    }
+
+    .content-none {
+        display: none;
+    }
+
+    .column1 {
+        height: 100vh;
+        width: 40%;
+        padding: 20px;
+        margin-left: 100px;
+        margin-top: 50px;
+    }
+
+    .column2 {
+        height: 100vh;
+        width: 60%;
+        text-align: center;
+        color: black;
+        background-size: 100vh;
+        padding: 60px;
+    }
+
+    .center-block {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+        width: 50vh;
+        border-radius: 25px;
+        height: 5vh;
+    }
+
+    .icon-email {
+        padding-left: 25px;
+        background: url("https://freepngimg.com/thumb/telephone/68708-ipma-message-icon-email-telephone-png-image-high-quality.png") no-repeat left;
+        background-size: 20px;
+    }
+
+    .icon-pass {
+        padding-left: 25px;
+        background: url("https://cdn2.iconfinder.com/data/icons/flat-ui-icons-24-px/24/lock-24-1024.png") no-repeat left;
+        background-size: 20px;
+    }
+
+    .icon-age {
+        padding-left: 25px;
+        background: url("data:image/png;base64,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") no-repeat left;
+        background-size: 20px;
+    }
+
+    .OTP {
+        width: 50%;
+        height: 100vh;
+        padding: 20px;
+        margin-left: 100px;
+        margin-top: 50px;
+        margin: auto;
+    }
+
+    .content-OTP {
+        display: none;
+    }
+
+    .input {
+        width: 35px;
+    }
+</style>

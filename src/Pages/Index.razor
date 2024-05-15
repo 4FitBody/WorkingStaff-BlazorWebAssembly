@@ -3,7 +3,6 @@
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject ILocalStorageService localStorageService
 
-
 <PageTitle>Login</PageTitle>
 
 <style>
@@ -16,95 +15,60 @@
 
 <div class="content">
 
-    <h1 style="color:black">Choose Account Type</h1>
+    <div style="color: black;" >
+        <h1>Member Login</h1>
 
-    <table style="margin-left:auto;margin-right:auto;border-collapse: collapse; width: 80%;">
-        <thead>
-            <tr>
-                <th style="padding: 20px;"><button @onclick='()=>AddToRoles("Admin")' class="button-index"><img
-                            style="height: 200px; width:200px;" type="image/png" src="icons/AdminIcon.png" />
-                        <div>Admin</div>
-                        <img src="icons/Tick.png" class="caret" style="height: 50px; width:50px;">
-                    </button></th>
-                <th style="padding: 20px;"><button @onclick='()=>AddToRoles("Moderator")' class="button-index"><img
-                            style="height: 200px; width:200px;" type="image/png" src="icons/ModeratorIcon.png" />
-                        <div>Moderator</div>
-                        <img src="icons/Tick.png" class="caret" style="height: 50px; width:50px; ">
-                    </button></th>
-                <th style="padding: 20px;"><button @onclick='()=>AddToRoles("Nutritionist")' class="button-index"><img
-                            style="height: 200px; width:200px;" type="image/png" src="icons/NutritionistIcon.png" />
-                        <div>Nutritionist </div>
-                        <img src="icons/Tick.png" class="caret" style="height: 50px; width:50px; ">
-                    </button></th>
-                <th style="padding: 20px;"><button @onclick='()=>AddToRoles("Trainer")' class="button-index"><img
-                            style="height: 200px; width:200px;" type="image/png" src="icons/TrainerIcon.png" />
-                        <div>Trainer</div>
-                        <img src="icons/Tick.png" class="caret" style="height: 50px; width:50px; ">
-                    </button></th>
-            </tr>
-        </thead>
-    </table>
-
-    <div style="color: black;">
-
-        <h1>Login</h1>
-
+        <img src="/img-01.png" alt="IMG">
+        <br>
         <EditForm Model="loginDto" OnValidSubmit="OnLoginFormSubmitAsync">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <label class="form-label d-block">
-                Email:
-                <InputText name="email" class="center-block icon-email" @bind-Value=loginDto.Email></InputText>
+                <InputText name="email" placeholder="Email" class="center-block icon-email" @bind-Value=loginDto.Email></InputText>
             </label>
-
+            <br>
             <label class="form-label d-block">
-                Password:
-                <InputText name="password" class="center-block icon-pass" type="password" @bind-Value=loginDto.Password>
+                <InputText name="password" placeholder="Password" class="center-block icon-pass" type="password" @bind-Value=loginDto.Password>
                 </InputText>
             </label>
-
+            <br>
             <button class="btn" style="background-color: lightblue; height:5vh;width:25vh">Login</button>
         </EditForm>
     </div>
+
 </div>
 
 <style>
-    .button-index {
-        height: 250;
-        position: relative;
-        width: 100%;
-        background-color: white;
-        border: 5px solid lightblue;
-        border-radius: 10px;
-        font-weight: bold;
-        font-size: large;
+    .content {
+        display: flex;
+        width: 50%;
+        margin: auto;
     }
 
-    .caret {
-        position: absolute;
-        bottom: 1px;
-        right: 0px;
-        display: none;
-        using System.Runtime.InteropServices;
-        using System.Runtime.InteropServices;
+    .column1 {
+        height: 100vh;
+        width: 40%;
+        padding: 20px;
+        margin-left: 100px;
+        margin-top: 50px;
     }
 
-    .button-index:focus {
-        outline: none;
-        border: 5px solid blue;
-        border-radius: 10px;
-    }
-
-    .button-index:focus .caret {
-        display: block;
+    .column2 {
+        height: 100vh;
+        width: 60%;
+        text-align: center;
+        color: black;
+        background-size: 100vh;
+        padding: 60px;
     }
 
     .center-block {
         display: block;
         margin-right: auto;
         margin-left: auto;
-        width: 75vh;
+        width: 50vh;
+        border-radius: 25px;
         height: 5vh;
     }
 
@@ -119,6 +83,8 @@
         background: url("https://cdn2.iconfinder.com/data/icons/flat-ui-icons-24-px/24/lock-24-1024.png") no-repeat left;
         background-size: 20px;
     }
+
+
 </style>
 
 @code {
@@ -133,19 +99,6 @@
 
         [Required]
         public List<string> Roles = new List<string>();
-    }
-
-    private async Task AddToRoles(string role)
-    {
-        if (loginDto.Roles.Count() == 0)
-        {
-            loginDto.Roles.Add(role);
-        }
-        else
-        {
-            loginDto.Roles.Clear();
-            loginDto.Roles.Add(role);
-        }
     }
 
     public LoginDto loginDto { get; set; } = new();
@@ -168,7 +121,7 @@
 
             await authenticationStateProvider.GetAuthenticationStateAsync();
 
-            navigationManager.NavigateTo($"/Home/{loginDto.Roles.FirstOrDefault()}");
+            navigationManager.NavigateTo($"/Home/");
         }
     }
 }
