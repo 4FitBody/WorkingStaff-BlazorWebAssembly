@@ -76,7 +76,7 @@
 
         var exerciseContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(exerciseContent, settings);
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5160/api/Exercise/Create/", exerciseContentJson);
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5050/api/Exercise/Create/", exerciseContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
