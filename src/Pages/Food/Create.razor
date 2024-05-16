@@ -1,5 +1,6 @@
 @page "/Food/Create"
 @inject NavigationManager navigationManager
+@using Newtonsoft.Json
 @attribute [Authorize(Roles = "Nutritionist")]
 
 <PageTitle>Food</PageTitle>
@@ -49,7 +50,10 @@
 </div>
 
 @code {
-    public Food food = new Food();
+    public Food food = new Food()
+        {
+            IsApproved = false
+        };
 
     public FoodContent foodContent = new FoodContent();
 
@@ -57,9 +61,9 @@
     {
         public Food Food { get; set; }
         public string? ImageFileName { get; set; }
-        public byte[]? ImageFileContent { get; set; } 
-        public string? VideoFileName { get; set; } 
-        public byte[]? VideoFileContent { get; set; } 
+        public byte[]? ImageFileContent { get; set; }
+        public string? VideoFileName { get; set; }
+        public byte[]? VideoFileContent { get; set; }
     }
 
     private async Task OnCreateSubmitAsync()
@@ -86,7 +90,7 @@
     }
 
     private async Task UploadImageChanged(InputFileChangeEventArgs e)
-   {
+    {
         Stream stream = e.File.OpenReadStream();
 
         MemoryStream ms = new MemoryStream();
@@ -99,11 +103,11 @@
 
         foodContent.ImageFileContent = ms.ToArray();
 
-        ms.Close(); 
-   }
+        ms.Close();
+    }
 
-   private async Task UploadVideoChanged(InputFileChangeEventArgs e)
-   {
+    private async Task UploadVideoChanged(InputFileChangeEventArgs e)
+    {
         Stream stream = e.File.OpenReadStream();
 
         MemoryStream ms = new MemoryStream();
@@ -115,7 +119,7 @@
         foodContent.VideoFileName = e.File.Name;
 
         foodContent.VideoFileContent = ms.ToArray();
-        
-        ms.Close(); 
-   }
+
+        ms.Close();
+    }
 }

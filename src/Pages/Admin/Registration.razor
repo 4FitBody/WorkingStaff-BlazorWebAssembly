@@ -165,7 +165,7 @@
         var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/Registration",
         registerDto, options);
 
-        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        if (loginResponse.StatusCode == System.Net.HttpStatusCode.Created)
         {
             navigationManager.NavigateTo("/Home/");
         }
