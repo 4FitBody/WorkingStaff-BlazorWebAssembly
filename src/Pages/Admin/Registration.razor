@@ -9,73 +9,90 @@
 
 
 <CascadingAuthenticationState>
-    <AuthorizeView Context="register" Roles="Admin">
+<AuthorizeView Context="register" Roles="Admin">
 
-        <div class="@(IsShown ? "content" : "content-none")">
-            <div style="color: black;">
-                <h1>Registration</h1>
+<div class="@(IsShown ? "content" : "content-none")">
+    <div style="color: black;">
+        <h1>Registration</h1>
 
-                <img src="/img-01.png" alt="IMG">
-                <br>
-                <EditForm Model="registerDto" OnValidSubmit="OnLoginFormSubmitAsync">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <label class="form-label d-block">
-                        <InputText name="text" placeholder="Name" class="center-block icon-email"
-                            @bind-Value=registerDto.Name></InputText>
-                    </label>
-                    <br>
-                    <label class="form-label d-block">
-                        <InputText name="text" placeholder="Surname" class="center-block icon-email"
-                            @bind-Value=registerDto.Surname></InputText>
-                    </label>
-                    <br>
-                    <label class="form-label d-block">
-                        <InputText name="email" placeholder="Email" class="center-block icon-email"
-                            @bind-Value=registerDto.Email></InputText>
-                    </label>
-                    <br>
-                    <label class="form-label d-block">
-                        <InputNumber min="0" max="90" placeholder="Age" type="number" name="age"
-                            class="center-block icon-age" @bind-Value=registerDto.Age></InputNumber>
-                    </label>
-                    <br>
-                    <label class="form-label d-block">
-                        <InputText name="password" placeholder="Password" class="center-block icon-pass" type="password"
-                            @bind-Value=registerDto.Password>
-                        </InputText>
-                    </label>
-                    <br>
-                    <button class="btn" style="background-color: lightblue; height:5vh;width:25vh"
-                        @onclick="ChangeDisplay">Login</button>
-                </EditForm>
+        <img src="/img-01.png" alt="IMG">
+        <br>
+        <EditForm Model="registerDto" OnValidSubmit="OnLoginFormSubmitAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <label class="form-label d-block">
+                <InputText name="text" placeholder="Name" class="center-block icon-email" @bind-Value=registerDto.Name>
+                </InputText>
+            </label>
+            <br>
+            <label class="form-label d-block">
+                <InputText name="text" placeholder="Surname" class="center-block icon-email"
+                    @bind-Value=registerDto.Surname></InputText>
+            </label>
+            <br>
+            <label class="form-label d-block">
+                <InputText name="email" placeholder="Email" class="center-block icon-email"
+                    @bind-Value=registerDto.Email></InputText>
+            </label>
+            <br>
+            <label class="form-label d-block">
+                <InputNumber min="0" max="90" placeholder="Age" type="number" name="age" class="center-block icon-age"
+                    @bind-Value=registerDto.Age></InputNumber>
+            </label>
+            <br>
+            <label class="form-label d-block">
+                <InputText name="password" placeholder="Password" class="center-block icon-pass" type="password"
+                    @bind-Value=registerDto.Password>
+                </InputText>
+            </label>
+            <br>
+            <div>
+                <input type="checkbox" id="admin" name="admin" checked="@isCheckedAdmin"
+                    @oninput="CheckboxAdminChanged"></input>
+                <label for="admin">Admin</label>
+
+                <input type="checkbox" id="trainer" name="trainer" checked="@isCheckedTrainer"
+                    @oninput="CheckboxTrainerChanged"></input>
+                <label for="trainer">Trainer</label>
+
+                <input type="checkbox" id="moderator" name="moderator" checked="@isCheckedModerator"
+                    @oninput="CheckboxModeratorChanged"></input>
+                <label for="moderator">Moderator</label>
+
+                <input type="checkbox" id="nutritionist" name="nutritionist" checked="@isCheckedNutritionist"
+                    @oninput="CheckboxNutritionistChanged"></input>
+                <label for="nutritionist">Nutritionist</label>
             </div>
+            <br>
+            <button class="btn" style="background-color: lightblue; height:5vh;width:25vh"
+                >Login</button>
+        </EditForm>
+    </div>
+</div>
 
-        </div>
 
+<div class="@(IsShownOTP ? "OTP" : "content-OTP")">
+    <p style="color: black;">Please enter six digit number</p>
+    <EditForm OnValidSubmit="OnOTPFormSubmitAsync" Model="oTPCode">
+        <InputText class="input" type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');"
+            @bind-Value="oTPCode.Num1" />
+        <InputText class="input" type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');"
+            @bind-Value="oTPCode.Num2" />
+        <InputText class="input" type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');"
+            @bind-Value="oTPCode.Num3" />
+        <InputText class="input" type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');"
+            @bind-Value="oTPCode.Num4" />
+        <InputText class="input" type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');"
+            @bind-Value="oTPCode.Num5" />
+        <InputText class="input" type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');"
+            @bind-Value="oTPCode.Num6" />
+        <br>
+        <br>
+        <button>Submit</button>
+    </EditForm>
+</div>
 
-        <div class="@(IsShownOTP ? "OTP" : "content-OTP")">
-            <p style="color: black;">Please enter six digit number</p>
-            <EditForm OnValidSubmit="OnOTPFormSubmitAsync" Model="oTPCode">
-                <InputText class="input" type="text" maxlength="1"
-                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num1" />
-                <InputText class="input" type="text" maxlength="1"
-                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num2" />
-                <InputText class="input" type="text" maxlength="1"
-                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num3" />
-                <InputText class="input" type="text" maxlength="1"
-                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num4" />
-                <InputText class="input" type="text" maxlength="1"
-                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num5" />
-                <InputText class="input" type="text" maxlength="1"
-                    oninput="this.value=this.value.replace(/[^0-9]/g,'');" @bind-Value="oTPCode.Num6" />
-                <br>
-                <br>
-                <button>Submit</button>
-            </EditForm>
-        </div>
-
-    </AuthorizeView>
+</AuthorizeView>
 </CascadingAuthenticationState>
 
 @code {
@@ -123,22 +140,16 @@
 
     public RegisterDto registerDto { get; set; } = new();
 
-    private async Task ChangeDisplay()
+    private async Task OnLoginFormSubmitAsync(EditContext editContext)
     {
+        IsShown = !IsShown;
+        IsShownOTP = !IsShownOTP;
         var httpClient = new HttpClient();
 
         var loginresponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/SendVerificationEmail/",
         registerDto.Email);
 
         registerDto.OriginalOTP = await loginresponse.Content.ReadAsStringAsync();
-
-        IsShown = !IsShown;
-        IsShownOTP = !IsShownOTP;
-    }
-
-    private async Task OnLoginFormSubmitAsync(EditContext editContext)
-    {
-
     }
 
     private async Task OnOTPFormSubmitAsync(EditContext editContext)
@@ -165,6 +176,65 @@
         }
     }
 
+    public bool isCheckedAdmin { get; set; } = false;
+
+    private void CheckboxAdminChanged(ChangeEventArgs e)
+    {
+        isCheckedAdmin = !isCheckedAdmin;
+        if (isCheckedAdmin == true)
+        {
+            registerDto.Roles.Add("Admin");
+        }
+        else
+        {
+            registerDto.Roles.Remove("Admin");
+        }
+    }
+
+    public bool isCheckedTrainer { get; set; } = false;
+
+    private void CheckboxTrainerChanged(ChangeEventArgs e)
+    {
+        isCheckedTrainer = !isCheckedTrainer;
+        if (isCheckedTrainer == true)
+        {
+            registerDto.Roles.Add("Trainer");
+        }
+        else
+        {
+            registerDto.Roles.Remove("Trainer");
+        }
+    }
+
+    public bool isCheckedModerator { get; set; } = false;
+
+    private void CheckboxModeratorChanged(ChangeEventArgs e)
+    {
+        isCheckedModerator = !isCheckedModerator;
+        if (isCheckedModerator == true)
+        {
+            registerDto.Roles.Add("Moderator");
+        }
+        else
+        {
+            registerDto.Roles.Remove("Moderator");
+        }
+    }
+
+    public bool isCheckedNutritionist { get; set; } = false;
+
+    private void CheckboxNutritionistChanged(ChangeEventArgs e)
+    {
+        isCheckedNutritionist = !isCheckedNutritionist;
+        if (isCheckedNutritionist == true)
+        {
+            registerDto.Roles.Add("Nutritionist");
+        }
+        else
+        {
+            registerDto.Roles.Remove("Nutritionist");
+        }
+    }
 }
 
 <style>
