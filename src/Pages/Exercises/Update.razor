@@ -1,5 +1,6 @@
 @page "/Exercise/Update/{Id:int}"
 @using System.Text.Json
+@using Newtonsoft.Json
 @inject NavigationManager navigationManager
 @attribute [Authorize(Roles = "Trainer")]
 
@@ -33,7 +34,7 @@
 
     <br>
 
-    <button type="submit" class="btn submit-button">Update exercise</button>
+    <button type="submit" class="btn btn-primary">Update exercise</button>
 </EditForm>
 
 
@@ -43,11 +44,28 @@
     [Parameter]
     public int Id { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync($"http://localhost:5170/api/Exercise/Details/{Id}");
+        
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+#pragma warning disable CS8601
+        exercise = JsonConvert.DeserializeObject<Exercise>(content);
+
+    }
+
     private async Task OnUpdateSubmitAsync(EditContext editContext)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync($"http://localhost:5050/api/Exercise/Update/{Id}", exercise);
+        var loginResponse = await httpClient.PutAsJsonAsync($"http://localhost:5170/api/Exercise/Update/{Id}", exercise);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

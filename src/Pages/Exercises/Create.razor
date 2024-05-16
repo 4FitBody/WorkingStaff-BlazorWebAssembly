@@ -19,10 +19,6 @@
                     <InputText name="text" @bind-Value=exercise.Name class="form-control" required />
                 </div>
                 <div class="form-group">
-                    <label>Name: </label>
-                    <InputText name="text" @bind-Value=exercise.Name class="form-control" required />
-                </div>
-                <div class="form-group">
                     <label>Equipment: </label>
                     <InputText name="text" @bind-Value=exercise.Equipment class="form-control" required />
                 </div>
@@ -33,6 +29,14 @@
                 <div class="form-group">
                     <label>Target: </label>
                     <InputText name="text" @bind-Value=exercise.Target class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Secondary Muscles: </label>
+                    <InputText name="text" @bind-Value=exercise.SecondaryMuscles class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Instructions: </label>
+                    <InputText name="text" @bind-Value=exercise.Instructions class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label class="form-label">Gif Url</label>
@@ -76,7 +80,7 @@
 
         var exerciseContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(exerciseContent, settings);
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5050/api/Exercise/Create/", exerciseContentJson);
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5170/api/Exercise/Create/", exerciseContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

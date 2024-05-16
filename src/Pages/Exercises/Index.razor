@@ -1,5 +1,6 @@
 @page "/Exercise/"
 @using System.Text.Json
+@using Newtonsoft.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
 @attribute [Authorize(Roles = "Admin, Nutritionist, Trainer, Moderator")]
@@ -31,7 +32,7 @@ else
                                         <img src="@pair.GifUrl" class="card-img-top" alt="ExerciseCover">
 
                                         <div class="card-body">
-                                            <a href="/Exercise/GetById/{@pair.Id}">pair.Name</a>
+                                            <a href="/Exercise/GetById/@pair.Id">@pair.Name</a>
                                         </div>
 
                                         <AuthorizeView Roles="Trainer">
@@ -66,7 +67,8 @@ else
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"http://localhost:5050/api/Exercise/Index");
+        var response = await httpClient.GetAsync($"http://localhost:5170/api/Exercise/Index");
+
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -74,14 +76,14 @@ else
             throw new ApplicationException(content);
         }
 
-        exercise = JsonSerializer.Deserialize<List<Exercise>>(content);
+        exercise = JsonConvert.DeserializeObject<List<Exercise>>(content);
     }
 
     private async Task DeleteExerciseAsync(int Id)
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5050/api/Exercise/Delete/{Id}");
+        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5170/api/Exercise/Delete/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -94,7 +96,7 @@ else
         var httpClient = new HttpClient();
 
         var loginResponse = await
-        httpClient.PutAsJsonAsync<Exercise>($"http://localhost:5050/api/Moderation/ApproveExercise/{Id}", null);
+        httpClient.PutAsJsonAsync<Exercise>($"http://localhost:5170/api/Moderation/ApproveExercise/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

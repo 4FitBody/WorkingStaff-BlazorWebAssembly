@@ -14,9 +14,9 @@ public class Exercise
 
     public string? Target { get; set; }
 
-    public string?[]? SecondaryMuscles { get; set; }
+    public string? SecondaryMuscles { get; set; }
 
-    public string?[]? Instructions { get; set; }
+    public string? Instructions { get; set; }
 
     public bool IsApproved { get; set; }
 }
