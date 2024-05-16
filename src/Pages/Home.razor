@@ -2,15 +2,18 @@
 @inject NavigationManager navigationManager
 @attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
 
-<CascadingAuthenticationState>
-    <AuthorizeView Context="home">
-        <Authorized>
-            <div class="container">
-                Welcome
-            </div>
-        </Authorized>
-    </AuthorizeView>
-</CascadingAuthenticationState>
+@* <CascadingAuthenticationState>
+<AuthorizeView Context="home">
+<Authorized> *@
+<div class="container">
+    Welcome to our <span style="font-weight: bold;">Working Staff Application</span>! This site is your comprehensive
+    resource for all things related
+    to health and wellness within our organization.
+    <footer>Thank you for being a part of our team</footer>
+</div>
+@* </Authorized>
+</AuthorizeView>
+</CascadingAuthenticationState> *@
 
 <style>
     h1 {
@@ -25,5 +28,6 @@
         margin: 0 auto;
         padding: 50px 20px;
         text-align: center;
+        align-items: center;
     }
 </style>

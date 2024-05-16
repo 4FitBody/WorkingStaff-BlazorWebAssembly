@@ -1,4 +1,5 @@
 @page "/Registration"
+@using System.Text.Json
 @inject NavigationManager navigationManager
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject ILocalStorageService localStorageService
@@ -145,9 +146,7 @@
         IsShown = !IsShown;
         IsShownOTP = !IsShownOTP;
         var httpClient = new HttpClient();
-
-        var loginresponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/SendVerificationEmail/",
-        registerDto.Email);
+        var loginresponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/SendVerificationEmail?email={registerDto.Email}", string.Empty);
 
         registerDto.OriginalOTP = await loginresponse.Content.ReadAsStringAsync();
     }
@@ -158,19 +157,15 @@
 
         var httpClient = new HttpClient();
 
-        var settings = new Newtonsoft.Json.JsonSerializerSettings
-            {
-                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects,
-                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
-                Formatting = Newtonsoft.Json.Formatting.Indented
-            };
+        var options = new JsonSerializerOptions()
+        {
+            IncludeFields = true,
+        };
+        
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/Registration",
+        registerDto, options);
 
-        var registerDtoJson = Newtonsoft.Json.JsonConvert.SerializeObject(registerDto, settings);
-
-        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/Registration/",
-        registerDtoJson);
-
-        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        if (loginResponse.StatusCode == System.Net.HttpStatusCode.Created)
         {
             navigationManager.NavigateTo("/Home/");
         }
