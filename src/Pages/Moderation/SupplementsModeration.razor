@@ -1,5 +1,6 @@
 @page "/Supplements/Moderation"
 @using System.Text.Json
+@using Newtonsoft.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
 @attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
@@ -58,7 +59,7 @@
             throw new ApplicationException(content);
         }
 
-        supplement = JsonSerializer.Deserialize<List<SportSupplement>>(content);
+        supplement = JsonConvert.DeserializeObject<List<SportSupplement>>(content);
     }
 
     private async Task DeleteSupplementAsync(int Id)
@@ -69,7 +70,7 @@
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            navigationManager.NavigateTo("/Supplements/");
+            navigationManager.NavigateTo("/Supplements/Moderation");
         }
     }
 
@@ -82,7 +83,7 @@
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            navigationManager.NavigateTo("/Supplements/");
+            navigationManager.NavigateTo("/Supplements/Moderation");
         }
     }
 }

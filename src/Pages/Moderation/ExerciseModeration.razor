@@ -1,5 +1,6 @@
 @page "/Exercise/Moderation"
 @using System.Text.Json
+@using Newtonsoft.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
 @attribute [Authorize(Roles = "Moderator")]
@@ -55,7 +56,7 @@
             throw new ApplicationException(content);
         }
 
-        exercise = JsonSerializer.Deserialize<List<Exercise>>(content);
+        exercise = JsonConvert.DeserializeObject<List<Exercise>>(content);
     }
 
     private async Task DeleteExerciseAsync(int Id)
@@ -66,7 +67,7 @@
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            navigationManager.NavigateTo("/Exercise/");
+            navigationManager.NavigateTo("/Exercise/Moderation");
         }
     }
 
@@ -78,7 +79,7 @@
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            navigationManager.NavigateTo("/Exercise/");
+            navigationManager.NavigateTo("/Exercise/Moderation");
         }
     }
 }
