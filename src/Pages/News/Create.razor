@@ -77,7 +77,7 @@
 
     private async Task UploadImageChanged(InputFileChangeEventArgs e)
    {
-        @* Stream stream = e.File.OpenReadStream();
+        Stream stream = e.File.OpenReadStream();
 
         MemoryStream ms = new MemoryStream();
 
@@ -85,12 +85,10 @@
 
         stream.Close();
 
-        FileToUpload uploadedFile = new FileToUpload();
-
         newsContent.ImageFileName = e.File.Name;
 
         newsContent.ImageFileContent = ms.ToArray();
 
-        ms.Close(); *@
+        ms.Close();
    }
 }
