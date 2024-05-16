@@ -2,6 +2,7 @@
 @inject NavigationManager navigationManager
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject ILocalStorageService localStorageService
+@inject NavigationManager navigationManager
 @attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Registration</PageTitle>
@@ -19,7 +20,16 @@
                 <EditForm Model="registerDto" OnValidSubmit="OnLoginFormSubmitAsync">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
-
+                    <label class="form-label d-block">
+                        <InputText name="text" placeholder="Name" class="center-block icon-email"
+                            @bind-Value=registerDto.Name></InputText>
+                    </label>
+                    <br>
+                    <label class="form-label d-block">
+                        <InputText name="text" placeholder="Surname" class="center-block icon-email"
+                            @bind-Value=registerDto.Surname></InputText>
+                    </label>
+                    <br>
                     <label class="form-label d-block">
                         <InputText name="email" placeholder="Email" class="center-block icon-email"
                             @bind-Value=registerDto.Email></InputText>
@@ -69,15 +79,8 @@
 </CascadingAuthenticationState>
 
 @code {
-
     private bool IsShown { get; set; } = true;
     private bool IsShownOTP { get; set; } = false;
-
-    private void ChangeDisplay()
-    {
-        IsShown = !IsShown;
-        IsShownOTP = !IsShownOTP;
-    }
 
     public class OTPCode
     {
@@ -93,36 +96,75 @@
         public string Num5 { get; set; }
         [Required]
         public string Num6 { get; set; }
+
+        public string GetOTPCode()
+        {
+            return $"{Num1}{Num2}{Num3}{Num4}{Num5}{Num6}";
+        }
     }
 
     OTPCode oTPCode = new OTPCode();
 
-    private async Task OnOTPFormSubmitAsync(EditContext editContext)
-    {
-
-    }
-
     public class RegisterDto
     {
         [Required]
-        public string Email { get; set; }
-
+        public string? Name { get; set; }
         [Required]
-        public int Age { get; set; }
-
+        public string? Surname { get; set; }
         [Required]
-        public string Password { get; set; }
-
+        public int? Age { get; set; }
         [Required]
+        public string? Email { get; set; }
+        public string? Password { get; set; }
         public List<string> Roles = new List<string>();
+        public string? OTP { get; set; }
+        public string? OriginalOTP { get; set; }
     }
 
     public RegisterDto registerDto { get; set; } = new();
+
+    private async Task ChangeDisplay()
+    {
+        var httpClient = new HttpClient();
+
+        var loginresponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/SendVerificationEmail/",
+        registerDto.Email);
+
+        registerDto.OriginalOTP = await loginresponse.Content.ReadAsStringAsync();
+
+        IsShown = !IsShown;
+        IsShownOTP = !IsShownOTP;
+    }
 
     private async Task OnLoginFormSubmitAsync(EditContext editContext)
     {
 
     }
+
+    private async Task OnOTPFormSubmitAsync(EditContext editContext)
+    {
+        registerDto.OTP = oTPCode.GetOTPCode();
+
+        var httpClient = new HttpClient();
+
+        var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Objects,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
+
+        var registerDtoJson = Newtonsoft.Json.JsonConvert.SerializeObject(registerDto, settings);
+
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/Registration/",
+        registerDtoJson);
+
+        if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            navigationManager.NavigateTo("/Home/");
+        }
+    }
+
 }
 
 <style>
