@@ -1,4 +1,4 @@
-@page "/Supplements/Create"
+@page "/Supplement/Create"
 @inject NavigationManager navigationManager
 @attribute [Authorize(Roles = "Moderator")]
 
@@ -72,7 +72,7 @@
 
         var supplementsContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(sportSupplementContent, settings);
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5149/api/Supplements/Create/", supplementsContentJson);
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5151/api/SportSupplement/Create/", supplementsContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

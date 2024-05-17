@@ -15,33 +15,35 @@
 }
 
 
-<AuthorizeView Context="SportSupplementsModerator" Roles="Moderator">
-    <div class="container">
-        <div class="row">
-            @foreach (var pair in supplement)
-            {
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-sm">
-                        <form id="@pair.Id">
+<CascadingAuthenticationState>
+    <AuthorizeView Context="SportSupplementsModerator" Roles="Moderator">
+        <div class="container">
+            <div class="row">
+                @foreach (var pair in supplement)
+                {
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <form id="@pair.Id">
 
-                            <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
+                                <img src="@pair.ImageUrl" class="card-img-top" alt="supplementCover">
 
-                            <div class="card-body">
-                                @pair.Name
-                            </div>
+                                <div class="card-body">
+                                    @pair.Name
+                                </div>
 
-                            <button type="button" class="btn btn-danger"
-                                @onclick='()=>DeleteSupplementAsync(pair.Id)'>Delete</button>
-                            <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Add
-                            </button>
-                        </form>
+                                <button type="button" class="btn btn-danger"
+                                    @onclick='()=>DeleteSupplementAsync(pair.Id)'>Delete</button>
+                                <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Add
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            }
+                }
 
+            </div>
         </div>
-    </div>
-</AuthorizeView>
+    </AuthorizeView>
+</CascadingAuthenticationState>
 
 
 @code {
@@ -51,7 +53,7 @@
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"http://localhost:5149/api/Moderation/GetAllSportSupplements/");
+        var response = await httpClient.GetAsync($"http://localhost:5243/api/Moderation/GetAllSportSupplements/");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -66,7 +68,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5149/api/Supplements/Delete/{Id}");
+        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5151/api/SportSupplement/Delete/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -79,7 +81,7 @@
         var httpClient = new HttpClient();
 
         var loginResponse = await
-        httpClient.PutAsJsonAsync<SportSupplement>($"http://localhost:5149/api/Moderation/ApproveSportSupplement/{Id}", null);
+        httpClient.PutAsJsonAsync<SportSupplement>($"http://localhost:5243/api/Moderation/ApproveSportSupplement/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

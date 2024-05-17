@@ -21,7 +21,7 @@
         <InputTextArea required name="text" @bind-Value=news.Description class="form-control" />
     </div>
 
-    <button type="submit" class="btn submit-button">Update news</button>
+    <button type="submit" class="btn btn-primary">Update news</button>
 </EditForm>
 
 
@@ -35,7 +35,7 @@
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"http://localhost:5149/api/News/Details/{Id}");
+        var response = await httpClient.GetAsync($"http://localhost:5182/api/News/Details/{Id}");
 
         var content = await response.Content.ReadAsStringAsync();
 
@@ -53,7 +53,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync($"http://localhost:5149/api/News/Update/{Id}", news);
+        var loginResponse = await httpClient.PutAsJsonAsync($"http://localhost:5182/api/News/Update/{Id}", news);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

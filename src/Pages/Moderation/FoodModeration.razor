@@ -12,33 +12,35 @@
     <p><em>Nothing Found</em></p>
 }
 
-<AuthorizeView Context="FoodModerator" Roles="Moderator">
-    <div class="container">
+<CascadingAuthenticationState>
+    <AuthorizeView Context="FoodModerator" Roles="Moderator">
+        <div class="container">
 
-        <div class="row">
-            @foreach (var pair in food)
-            {
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-sm">
-                        <form id="@pair.Id">
+            <div class="row">
+                @foreach (var pair in food)
+                {
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <form id="@pair.Id">
 
-                            <img src="@pair.ImageUrl" class="card-img-top" alt="FoodCover">
+                                <img src="@pair.ImageUrl" class="card-img-top" alt="FoodCover">
 
-                            <div class="card-body">
-                                <a href="/Food/GetById/{@pair.Id}">@pair.Name</a>
-                            </div>
+                                <div class="card-body">
+                                    <a href="/Food/GetById/@pair.Id">@pair.Name</a>
+                                </div>
 
-                            <button type="button" class="btn btn-danger"
-                                @onclick='()=>DeleteFoodAsync(pair.Id)'>Delete</button>
-                            <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Approve
-                            </button>
-                        </form>
+                                <button type="button" class="btn btn-danger"
+                                    @onclick='()=>DeleteFoodAsync(pair.Id)'>Delete</button>
+                                <button type="button" class="btn btn-primary" @onclick='()=>UpdateStatusAsync(pair.Id)'> Approve
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
-    </div>
-</AuthorizeView>
+    </AuthorizeView>
+</CascadingAuthenticationState>
 
 
 @code {
@@ -48,7 +50,7 @@
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"http://localhost:5149/api/Moderation/GetAllFood");
+        var response = await httpClient.GetAsync($"http://localhost:5243/api/Moderation/GetAllFood");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -63,7 +65,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5149/api/Food/Delete/{Id}");
+        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5220/api/Food/Delete/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -75,11 +77,11 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync<Food>($"http://localhost:5149/api/Moderation/ApproveFood/{Id}", null);
+        var loginResponse = await httpClient.PutAsJsonAsync<Food>($"http://localhost:5243/api/Moderation/ApproveFood/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            navigationManager.NavigateTo("//Food/Moderation");
+            navigationManager.NavigateTo("/Food/Moderation");
         }
     }
 }

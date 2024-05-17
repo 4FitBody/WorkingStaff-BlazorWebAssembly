@@ -81,7 +81,7 @@
 
         var foodContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(foodContent, settings);
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5149/api/Food/Create/", foodContentJson);
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5220/api/Food/Create/", foodContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

@@ -2,6 +2,7 @@
 
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject ILocalStorageService localStorageService
+@inject NavigationManager navigationManager
 
 <div class="page">
     <div class="sidebar">
@@ -30,5 +31,7 @@
         await localStorageService.RemoveItemAsync("jwt_access");
             
         await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        navigationManager.NavigateTo("/");
     }
 }
