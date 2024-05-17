@@ -1,5 +1,6 @@
 @page "/Food/Moderation"
 @using System.Text.Json
+@using Newtonsoft.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
 @attribute [Authorize(Roles = "Moderator")]
@@ -55,7 +56,7 @@
             throw new ApplicationException(content);
         }
 
-        food = JsonSerializer.Deserialize<List<Food>>(content);
+        food = JsonConvert.DeserializeObject<List<Food>>(content);
     }
 
     private async Task DeleteFoodAsync(int Id)
@@ -66,7 +67,7 @@
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            navigationManager.NavigateTo("/Food/");
+            navigationManager.NavigateTo("/Food/Moderation");
         }
     }
 
@@ -78,7 +79,7 @@
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            navigationManager.NavigateTo("/Food/");
+            navigationManager.NavigateTo("//Food/Moderation");
         }
     }
 }
