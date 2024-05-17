@@ -1,6 +1,7 @@
 @page "/Food/"
 @using System.Text.Json
 @inject NavigationManager navigationManager
+@using Newtonsoft.Json
 @inject HttpClient Http
 @attribute [Authorize(Roles = "Admin, Nutritionist, Trainer, Moderator")]
 
@@ -76,7 +77,7 @@ else
             throw new ApplicationException(content);
         }
 
-        food = JsonSerializer.Deserialize<List<Food>>(content);
+        food = JsonConvert.DeserializeObject<List<Food>>(content);
     }
 
     private async Task DeleteFoodAsync(int Id)

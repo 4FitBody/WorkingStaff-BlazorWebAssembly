@@ -1,5 +1,6 @@
 @page "/Food/Update/{Id:int}"
 @using System.Text.Json
+@using Newtonsoft.Json
 @inject NavigationManager navigationManager
 @attribute [Authorize(Roles = "Nutritionist")]
 
@@ -56,7 +57,24 @@
 
     [Parameter]
     public int Id { get; set; }
-    
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync($"http://localhost:5149/api/Food/Details/{Id}");
+
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+#pragma warning disable CS8601
+        food = JsonConvert.DeserializeObject<Food>(content);
+
+    }
+
     private async Task OnUpdateSubmitAsync(EditContext editContext)
     {
         var httpClient = new HttpClient();
