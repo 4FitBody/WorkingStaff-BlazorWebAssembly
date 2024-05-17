@@ -68,7 +68,7 @@
 
         var newsContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(newsContent, settings);
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5182/api/News/Create/", newsContentJson);
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://newsapiapp:6060/api/News/Create/", newsContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

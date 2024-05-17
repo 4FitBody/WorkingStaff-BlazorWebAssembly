@@ -50,7 +50,7 @@
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"http://localhost:5243/api/Moderation/GetAllFood");
+        var response = await httpClient.GetAsync($"http://moderationapiapp:5050/api/Moderation/GetAllFood");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -65,7 +65,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5220/api/Food/Delete/{Id}");
+        var loginResponse = await httpClient.DeleteAsync($"http://moderationapiapp:5050/api/Food/Delete/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -77,7 +77,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync<Food>($"http://localhost:5243/api/Moderation/ApproveFood/{Id}", null);
+        var loginResponse = await httpClient.PutAsJsonAsync<Food>($"http://moderationapiapp:5050/api/Moderation/ApproveFood/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

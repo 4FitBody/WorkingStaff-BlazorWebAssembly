@@ -48,7 +48,7 @@
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"http://localhost:5170/api/Exercise/Details/{Id}");
+        var response = await httpClient.GetAsync($"http://exerciseapiapp:10010/api/Exercise/Details/{Id}");
         
         var content = await response.Content.ReadAsStringAsync();
 
@@ -65,7 +65,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync($"http://localhost:5170/api/Exercise/Update/{Id}", exercise);
+        var loginResponse = await httpClient.PutAsJsonAsync($"http://exerciseapiapp:10010/api/Exercise/Update/{Id}", exercise);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

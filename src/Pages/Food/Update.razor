@@ -62,7 +62,7 @@
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"http://localhost:5220/api/Food/Details/{Id}");
+        var response = await httpClient.GetAsync($"http://nutritionapiapp:7070/api/Food/Details/{Id}");
 
         var content = await response.Content.ReadAsStringAsync();
 
@@ -79,7 +79,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.PutAsJsonAsync($"http://localhost:5220/api/Food/Update/{Id}", food);
+        var loginResponse = await httpClient.PutAsJsonAsync($"http://nutritionapiapp:7070/api/Food/Update/{Id}", food);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

@@ -53,7 +53,7 @@
     {
         var httpClient = new HttpClient();
 
-        var response = await httpClient.GetAsync($"http://localhost:5243/api/Moderation/GetAllSportSupplements/");
+        var response = await httpClient.GetAsync($"http://moderationapiapp:5050/api/Moderation/GetAllSportSupplements/");
         var content = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -68,7 +68,7 @@
     {
         var httpClient = new HttpClient();
 
-        var loginResponse = await httpClient.DeleteAsync($"http://localhost:5151/api/SportSupplement/Delete/{Id}");
+        var loginResponse = await httpClient.DeleteAsync($"http://moderationapiapp:5050/api/SportSupplement/Delete/{Id}");
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -81,7 +81,7 @@
         var httpClient = new HttpClient();
 
         var loginResponse = await
-        httpClient.PutAsJsonAsync<SportSupplement>($"http://localhost:5243/api/Moderation/ApproveSportSupplement/{Id}", null);
+        httpClient.PutAsJsonAsync<SportSupplement>($"http://moderationapiapp:5050/api/Moderation/ApproveSportSupplement/{Id}", null);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {

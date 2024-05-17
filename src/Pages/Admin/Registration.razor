@@ -146,7 +146,7 @@
         IsShown = !IsShown;
         IsShownOTP = !IsShownOTP;
         var httpClient = new HttpClient();
-        var loginresponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/SendVerificationEmail?email={registerDto.Email}", string.Empty);
+        var loginresponse = await httpClient.PostAsJsonAsync($"http://jwtapiapp:8080/api/Identity/SendVerificationEmail?email={registerDto.Email}", string.Empty);
 
         registerDto.OriginalOTP = await loginresponse.Content.ReadAsStringAsync();
     }
@@ -162,7 +162,7 @@
             IncludeFields = true,
         };
         
-        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5159/api/Identity/Registration",
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://jwtapiapp:8080/api/Identity/Registration",
         registerDto, options);
 
         if (loginResponse.StatusCode == System.Net.HttpStatusCode.Created)

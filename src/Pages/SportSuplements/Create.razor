@@ -72,7 +72,7 @@
 
         var supplementsContentJson = Newtonsoft.Json.JsonConvert.SerializeObject(sportSupplementContent, settings);
 
-        var loginResponse = await httpClient.PostAsJsonAsync($"http://localhost:5151/api/SportSupplement/Create/", supplementsContentJson);
+        var loginResponse = await httpClient.PostAsJsonAsync($"http://supplementapiapp:9090/api/SportSupplement/Create/", supplementsContentJson);
 
         if (loginResponse.IsSuccessStatusCode && loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
         {
