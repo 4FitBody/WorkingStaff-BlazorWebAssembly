@@ -1,5 +1,6 @@
 @page "/Supplements/GetById/{Id:int}"
 @using System.Text.Json
+@using Newtonsoft.Json
 @attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
 
 <PageTitle>Supplements</PageTitle>
@@ -62,7 +63,7 @@ else
             throw new ApplicationException(content);
         }
 #pragma warning disable CS8601
-        supplement = JsonSerializer.Deserialize<SportSupplement>(content);
+        supplement = JsonConvert.DeserializeObject<SportSupplement>(content);
 
     }
 }

@@ -1,5 +1,6 @@
 @page "/News/"
 @using System.Text.Json
+@using Newtonsoft.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
 @attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
@@ -64,7 +65,7 @@ else
             throw new ApplicationException(content);
         }
 
-        news = JsonSerializer.Deserialize<List<News>>(content);
+        news = JsonConvert.DeserializeObject<List<News>>(content);
     }
 
     private async Task DeleteNewsAsync(int Id)

@@ -1,5 +1,6 @@
 @page "/News/Update/{Id:int}"
 @using System.Text.Json
+@using Newtonsoft.Json
 @inject NavigationManager navigationManager
 @attribute [Authorize(Roles = "Moderator")]
 
@@ -29,6 +30,24 @@
 
     [Parameter]
     public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetAsync($"http://localhost:5149/api/News/Details/{Id}");
+
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApplicationException(content);
+        }
+
+#pragma warning disable CS8601
+        news = JsonConvert.DeserializeObject<News>(content);
+#pragma warning restore CS8601
+    }
 
     private async Task OnUpdateSubmitAsync(EditContext editContext)
     {

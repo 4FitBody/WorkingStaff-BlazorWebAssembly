@@ -1,5 +1,6 @@
 @page "/News/Create"
 @inject NavigationManager navigationManager
+@using Newtonsoft.Json
 @attribute [Authorize(Roles = "Moderator")]
 
 <PageTitle>News</PageTitle>
@@ -28,8 +29,8 @@
                 <div class="form-group">
                     <label class="form-label">Image Url</label>
                     <br>
-                    <InputFile OnChange="@UploadImageChanged" class="form-control" required id="file" type="file" name="file"
-                        accept="image/*" />
+                    <InputFile OnChange="@UploadImageChanged" class="form-control" required id="file" type="file"
+                        name="file" accept="image/*" />
                 </div>
                 <button type="submit" class="btn btn-primary">Create</button>
             </div>
@@ -49,7 +50,7 @@
     {
         public News News { get; set; }
         public string? ImageFileName { get; set; }
-        public byte[]? ImageFileContent { get; set; } 
+        public byte[]? ImageFileContent { get; set; }
     }
 
     private async Task OnCreateSubmitAsync(EditContext editContext)
@@ -76,7 +77,7 @@
     }
 
     private async Task UploadImageChanged(InputFileChangeEventArgs e)
-   {
+    {
         Stream stream = e.File.OpenReadStream();
 
         MemoryStream ms = new MemoryStream();
@@ -90,5 +91,5 @@
         newsContent.ImageFileContent = ms.ToArray();
 
         ms.Close();
-   }
+    }
 }
