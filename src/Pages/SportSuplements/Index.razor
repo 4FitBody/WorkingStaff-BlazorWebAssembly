@@ -2,6 +2,7 @@
 @using System.Text.Json
 @inject NavigationManager navigationManager
 @inject HttpClient Http
+@using Newtonsoft.Json
 @attribute [Authorize(Roles = "Admin, Nutritionist, Trainer,Moderator")]
 
 <PageTitle>Supplements</PageTitle>
@@ -72,7 +73,7 @@ else
             throw new ApplicationException(content);
         }
 
-        supplement = JsonSerializer.Deserialize<List<SportSupplement>>(content);
+        supplement = JsonConvert.DeserializeObject<List<SportSupplement>>(content);
     }
 
     private async Task DeleteSupplementAsync(int Id)
